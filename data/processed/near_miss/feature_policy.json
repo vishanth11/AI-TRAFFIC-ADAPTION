@@ -1,0 +1,135 @@
+{
+  "policy_version": "phase2",
+  "decisions": [
+    {
+      "feature": "speed_object_1_kph",
+      "type": "original",
+      "decision": "keep",
+      "reason": "base physical measurement (kph)",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "speed_object_2_kph",
+      "type": "original",
+      "decision": "keep",
+      "reason": "base physical measurement (kph)",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "angle_degrees",
+      "type": "original",
+      "decision": "keep",
+      "reason": "encounter geometry, computable pre-conflict",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "PET",
+      "type": "original",
+      "decision": "keep_with_flag",
+      "reason": "core surrogate-safety measure; retained for offline modeling but flagged: post-encroachment time can only be measured AFTER the interaction completes",
+      "leakage_risk": "none_statistical",
+      "deployment_availability": "POST_EVENT_ONLY \u2014 not available in a real-time system at decision time; deployment/design issue, not target leakage"
+    },
+    {
+      "feature": "acceleration_obj1_mps2",
+      "type": "original",
+      "decision": "keep",
+      "reason": "base kinematic measurement",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "acceleration_obj2_mps2",
+      "type": "original",
+      "decision": "keep",
+      "reason": "base kinematic measurement",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "min_dist_dual_check_m",
+      "type": "original",
+      "decision": "keep",
+      "reason": "minimum separation distance (m)",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "object_count_at_frame1",
+      "type": "original",
+      "decision": "keep",
+      "reason": "scene context",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "target_dist_px",
+      "type": "original",
+      "decision": "keep_with_flag",
+      "reason": "raw pixel distance; camera-geometry dependent",
+      "leakage_risk": "none",
+      "deployment_availability": "camera_dependent \u2014 may not transfer across camera geometries"
+    },
+    {
+      "feature": "class_object_1",
+      "type": "original_categorical",
+      "decision": "keep",
+      "reason": "object type; requires encoding in Phase 3",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "class_object_2",
+      "type": "original_categorical",
+      "decision": "keep",
+      "reason": "object type; requires encoding in Phase 3",
+      "leakage_risk": "none",
+      "deployment_availability": "available_live"
+    },
+    {
+      "feature": "FE_inv_PET",
+      "type": "engineered_verified",
+      "formula": "1 / PET",
+      "decision": "retain_temporarily_flag_redundant",
+      "reason": "pure mathematical transform, verified; exact duplicate of PET information (r=0.92) \u2014 statistical redundancy, NOT leakage",
+      "leakage_risk": "none_statistical_redundancy_only",
+      "deployment_availability": "inherits PET post-event limitation"
+    },
+    {
+      "feature": "FE_dist_squared",
+      "type": "engineered_verified",
+      "formula": "target_dist_px ** 2",
+      "decision": "retain_temporarily_flag_redundant",
+      "reason": "verified pure transform; heavy-tailed scale instability; statistical redundancy, NOT leakage",
+      "leakage_risk": "none_statistical_redundancy_only",
+      "deployment_availability": "camera_dependent"
+    },
+    {
+      "feature": "FE_log_mesafe",
+      "type": "engineered_verified",
+      "formula": "ln(1 + target_dist_px)",
+      "decision": "retain_temporarily_flag_redundant",
+      "reason": "verified pure transform; monotone copy of target_dist_px; statistical redundancy, NOT leakage",
+      "leakage_risk": "none_statistical_redundancy_only",
+      "deployment_availability": "camera_dependent"
+    },
+    {
+      "feature": "FE_safety_index",
+      "type": "engineered_verified_phase3",
+      "formula": "(speed_object_1_kph + speed_object_2_kph) / (2 * max(target_dist_px, 1e-06))",
+      "decision": "keep_with_flag",
+      "reason": "PROVENANCE ESTABLISHED in Phase 3: exact deterministic transform of speed_object_1_kph, speed_object_2_kph and target_dist_px (verified to 3 decimals on all 2,457 dist>0 rows; the 51 dist==0 rows use a 1e-6 floor, producing quantized extremes up to 2.85e7). It is an inverse-pixel-distance x combined-speed composite with inconsistent units (kph/px) \u2014 redundant with existing features and numerically unstable, but NOT target leakage",
+      "leakage_risk": "none (pure input-feature transform); redundancy + instability only",
+      "deployment_availability": "available_live (speeds + pixel distance), camera_dependent",
+      "action": "Phase 3 trains with/without it (configs A/B) to measure its effect; no test-based keep/drop decision"
+    }
+  ],
+  "principles": [
+    "derived != leakage: transforms are flagged for redundancy, not accused of leakage",
+    "PET concern is deployment availability (post-event), not statistical leakage",
+    "no feature deleted; decisions are advisory for Phase 3"
+  ]
+}

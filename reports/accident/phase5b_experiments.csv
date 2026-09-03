@@ -1,0 +1,2 @@
+experiment_id,model,pretrained,epochs,batch_size,learning_rate,augmentation,class_handling,val_map50,val_map50_95,val_accident_ap50,val_accident_precision,val_accident_recall,training_time,notes
+EXP_A,fasterrcnn_mobilenet_v3_large_320_fpn,True,3,4,0.005,none,background_offset,0.4686,0.2313,0.7624,0.7624,0.5083,1306.1,"Correctness rerun: fixed background/label mapping (+1 offset), otherwise identical to Phase 5 config; 3 epochs."

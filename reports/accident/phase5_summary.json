@@ -1,0 +1,74 @@
+{
+  "config": {
+    "seed": 42,
+    "model": "fasterrcnn_mobilenet_v3_large_320_fpn",
+    "num_classes": 2,
+    "image_size": [
+      320,
+      320
+    ],
+    "batch_size": 4,
+    "epochs": 2,
+    "learning_rate": 0.005,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "lr_scheduler_step": 2,
+    "lr_scheduler_gamma": 0.1,
+    "num_workers": 0,
+    "pretrained": true,
+    "device": "cpu"
+  },
+  "device": "cpu",
+  "trainable_parameters": 18871333,
+  "best_epoch": 1,
+  "best_val_mAP_50": 0.09482691851564862,
+  "total_training_seconds": 1237.1,
+  "best_model_path": "C:\\Users\\Varun\\Desktop\\acci\\models\\accident\\best_detector.pth",
+  "final_model_path": "C:\\Users\\Varun\\Desktop\\acci\\models\\accident\\final_detector.pth",
+  "validation_metrics": {
+    "overall": {
+      "mAP_50_95": 0.037444913998232084,
+      "mAP_50": 0.09482691851564862,
+      "mAP_75": 0.02492043984909515,
+      "mAP_small": 0.008846103969645629,
+      "mAP_medium": 0.0563536705882973,
+      "mAP_large": 0.14834423770352004,
+      "AR_1": 0.043970588235294115,
+      "AR_10": 0.09764705882352939,
+      "AR_100": 0.09911764705882353,
+      "AR_small": 0.05510752688172042,
+      "AR_medium": 0.14545454545454545,
+      "AR_large": 0.19318181818181818
+    },
+    "per_class": {
+      "accident": {
+        "AP_50": 0.0,
+        "AP_50_95": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "non_accident": {
+        "AP_50": 0.1896538370312972,
+        "AP_50_95": 0.07488982799646415,
+        "precision": 0.1896538370312972,
+        "recall": 0.19823529411764707
+      }
+    }
+  },
+  "training_history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.301662,
+      "val_mAP_50": 0.0948,
+      "val_mAP_50_95": 0.0374,
+      "val_accident_AP": 0.0
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.297518,
+      "val_mAP_50": 0.0912,
+      "val_mAP_50_95": 0.042,
+      "val_accident_AP": 0.0
+    }
+  ]
+}

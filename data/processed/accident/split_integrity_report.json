@@ -1,0 +1,14 @@
+{
+  "method": "SHA-256 of embedded PNG bytes (content hash, not filename)",
+  "train_images": 2122,
+  "validation_images": 316,
+  "test_images": 325,
+  "unique_images": 2737,
+  "cross_split_duplicates": 0,
+  "detail": {
+    "train_and_validation": 0,
+    "train_and_test": 0,
+    "validation_and_test": 0
+  },
+  "result": "PASS"
+}

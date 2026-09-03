@@ -1,0 +1,40 @@
+{
+  "original_model": "random_forest_A",
+  "original_model_path": "models\\near_miss\\random_forest_A.joblib",
+  "calibration_method": "sigmoid",
+  "feature_configuration": "A_offline_full_no_fesafety",
+  "features": [
+    "speed_object_1_kph",
+    "speed_object_2_kph",
+    "angle_degrees",
+    "PET",
+    "acceleration_obj1_mps2",
+    "acceleration_obj2_mps2",
+    "min_dist_dual_check_m",
+    "object_count_at_frame1",
+    "target_dist_px",
+    "FE_inv_PET",
+    "FE_log_mesafe",
+    "FE_dist_squared",
+    "class_object_1",
+    "class_object_2"
+  ],
+  "random_seed": 42,
+  "calibration_training_split": "validation",
+  "calibration_training_n_samples": 376,
+  "calibration_artifact": "models\\near_miss\\random_forest_A_calibrated.joblib",
+  "selection_basis": "sigmoid chosen for stability: isotonic had lower validation Brier+log_loss but MCE~0 indicating overfit on the small validation set",
+  "calibration_scores_validation": {
+    "raw": 0.404294,
+    "sigmoid": 0.387458,
+    "isotonic": 0.330408
+  },
+  "validation_ece": {
+    "sigmoid": 0.046262,
+    "isotonic": 0.0
+  },
+  "validation_mce": {
+    "sigmoid": 0.199698,
+    "isotonic": 0.0
+  }
+}

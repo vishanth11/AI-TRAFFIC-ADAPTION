@@ -1,0 +1,11 @@
+{
+  "dataset": "traffic-accident-cctv-object-detection",
+  "task": "accident + object detection",
+  "label_column": "objects.category",
+  "mapping": {
+    "0": "accident",
+    "1": "non_accident"
+  },
+  "source": "dataset documentation (Hugging Face dataset card README, justjuu/traffic-accident-cctv-object-detection); class map is NOT embedded in the parquet files themselves",
+  "bbox_format": "COCO-style [x, y, w, h] in absolute pixels on 640x640 images"
+}

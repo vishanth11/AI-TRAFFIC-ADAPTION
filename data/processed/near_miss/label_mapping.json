@@ -1,0 +1,19 @@
+{
+  "dataset": "DTC-FM",
+  "target_column": "event_type",
+  "mapping_status": "unconfirmed",
+  "class_0": "class_0 (semantics unconfirmed; evidence from class-conditional statistics is consistent with a 'non-conflict / normal' class, NOT confirmed by source documentation)",
+  "class_1": "class_1 (semantics unconfirmed; evidence from class-conditional statistics is consistent with a 'conflict / near-miss' class, NOT confirmed by source documentation)",
+  "source": "No label map present in the CSV files. Web documentation search performed in Phase 3 (2026-09-02): no public dataset, paper or documentation named 'DTC-FM' could be located; no source documentation available locally. Neutral class_0/class_1 terminology MUST be used until the mapping is confirmed.",
+  "class_distribution": {
+    "class_0": {
+      "count": 1867,
+      "pct": 74.44
+    },
+    "class_1": {
+      "count": 641,
+      "pct": 25.56
+    }
+  },
+  "note": "sample_index in dtc_fm_combined.csv is an internal processing index (row position 0..2507), NOT a real dataset identifier."
+}

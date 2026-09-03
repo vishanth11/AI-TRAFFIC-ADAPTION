@@ -1,0 +1,73 @@
+{
+  "phase": 1,
+  "generated": "2026-09-02",
+  "datasets": {
+    "filtered_features_DTC_FM.csv": {
+      "rows": 2508,
+      "cols": 15,
+      "missing": 0,
+      "duplicate_rows": 5,
+      "role": "near_miss_features"
+    },
+    "target_labels_DTC_FM.csv": {
+      "rows": 2508,
+      "cols": 1,
+      "missing": 0,
+      "classes": {
+        "0.0": {
+          "count": 1867,
+          "pct": 74.44
+        },
+        "1.0": {
+          "count": 641,
+          "pct": 25.56
+        }
+      },
+      "label_semantics": "unconfirmed_in_files_requires_documentation",
+      "role": "near_miss_labels"
+    },
+    "train-00000-of-00002.parquet": {
+      "rows": 1061
+    },
+    "train-00001-of-00002.parquet": {
+      "rows": 1061
+    },
+    "validation-00000-of-00001.parquet": {
+      "rows": 316
+    },
+    "test-00000-of-00001.parquet": {
+      "rows": 325
+    }
+  },
+  "accident_dataset": {
+    "total_images": 2763,
+    "total_objects": 5400,
+    "image_size": "640x640 PNG embedded",
+    "bbox_format": "coco_xywh_absolute_pixels",
+    "classes": {
+      "0": "accident",
+      "1": "non_accident"
+    },
+    "class_map_source": "huggingface README justjuu/traffic-accident-cctv-object-detection (not embedded in files)",
+    "split_object_counts": {
+      "train": {
+        "0": 2313,
+        "1": 1807
+      },
+      "validation": {
+        "0": 338,
+        "1": 340
+      },
+      "test": {
+        "0": 391,
+        "1": 211
+      }
+    },
+    "cross_split_duplicates": 0,
+    "train_internal_duplicate_images": 26,
+    "schemas_identical": true
+  },
+  "fe_safety_index": "unexplained_composite_flagged_MEDIUM",
+  "dataset_modifications": "none",
+  "models_trained": 0
+}

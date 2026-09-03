@@ -1,0 +1,4 @@
+method,validation_brier,test_brier,validation_log_loss,test_log_loss,validation_ece,test_ece,validation_mce,test_mce
+raw,0.096016,0.099755,0.308279,0.32127,0.078816,0.086362,0.211035,0.252102
+sigmoid,0.088684,0.089807,0.298774,0.301506,0.046262,0.043901,0.199698,0.14545
+isotonic,0.080224,0.091872,0.250184,0.618604,0.0,0.02753,0.0,0.5724

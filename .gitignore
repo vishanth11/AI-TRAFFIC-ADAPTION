@@ -1,0 +1,10 @@
+.venv/
+.venv-accident/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+dataset/*.parquet
+models/accident/best_detector.pth
+models/accident/final_detector.pth
+models/accident/phase5b_*.pth

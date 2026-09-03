@@ -1,0 +1,100 @@
+{
+  "phase": 6,
+  "created_utc": "2026-09-03T02:02:31Z",
+  "checkpoint_source": "C:\\Users\\Varun\\Desktop\\acci\\models\\accident\\phase5b_expA_best.pth",
+  "checkpoint_source_id": "phase5b_expA",
+  "selection": {
+    "chosen": "phase5b_expA",
+    "checkpoint_path": "C:\\Users\\Varun\\Desktop\\acci\\models\\accident\\phase5b_expA_best.pth",
+    "verified_metrics": {
+      "val_accident_ap50": 0.76241096938345,
+      "val_map50": 0.46863291204231217,
+      "val_accident_recall": 0.5082840236686391
+    },
+    "all_candidates": {
+      "phase5_baseline": {
+        "val_accident_ap50": 0.0,
+        "val_map50": 0.09482691851564862,
+        "val_accident_recall": 0.0
+      },
+      "phase5b_expA": {
+        "val_accident_ap50": 0.76241096938345,
+        "val_map50": 0.46863291204231217,
+        "val_accident_recall": 0.5082840236686391
+      },
+      "phase5b_expB": {
+        "val_accident_ap50": 0.7113661337901164,
+        "val_map50": 0.4047171557875551,
+        "val_accident_recall": 0.4837278106508875
+      }
+    },
+    "rule": "max validation accident AP@50; mAP@50 tie-break (Phase 5B spec)"
+  },
+  "logged_candidate_metrics": {
+    "phase5_baseline": {
+      "val_accident_ap50": 0.0,
+      "val_map50": 0.0948
+    },
+    "phase5b_expA": {
+      "val_accident_ap50": 0.7624,
+      "val_map50": 0.4686
+    },
+    "phase5b_expB": {
+      "val_accident_ap50": 0.7114,
+      "val_map50": 0.4047
+    }
+  },
+  "signal": "noisy_or_top5",
+  "calibration_method": "platt",
+  "calibration_params": {
+    "method": "platt",
+    "a": 0.48996558230802595,
+    "b": 3.8711533728013694
+  },
+  "fit_split": "validation",
+  "selection_split": "validation",
+  "fit_image_count": 316,
+  "fit_positive_image_count": 314,
+  "validation_fit_metrics": {
+    "brier": 0.006294,
+    "log_loss": 0.035592,
+    "ece": 1e-06
+  },
+  "calibration_comparison": [
+    {
+      "method": "platt",
+      "brier": 0.0063,
+      "log_loss": 0.0356,
+      "ece": 0.0,
+      "cv_brier_mean": 0.0063,
+      "cv_brier_std": 0.0076,
+      "cv_log_loss_mean": 0.0382
+    },
+    {
+      "method": "isotonic",
+      "brier": 0.0061,
+      "log_loss": 0.0277,
+      "ece": 0.0,
+      "cv_brier_mean": 0.0064,
+      "cv_brier_std": 0.0074,
+      "cv_log_loss_mean": 0.1058
+    }
+  ],
+  "leakage_guard": {
+    "test_used_for_calibration": false,
+    "test_used_for_threshold_selection": false,
+    "test_evaluations_performed": 1
+  },
+  "dataset_sha256": {
+    "train-00000-of-00002.parquet": "c2d8cdd365e9b36b43060a4a2cd3831ec57711f2b0b973c648bcaa3a50c97bed",
+    "train-00001-of-00002.parquet": "ffcf6eeffef39d6d9da54a4d5cdb98bee1e9b1353f7785fdf8cbd6084d51d608",
+    "validation-00000-of-00001.parquet": "d6c57bd6255502289646c1ec3b960ba1cd3caedc8f353c785a13743ca96a2a70",
+    "test-00000-of-00001.parquet": "fb61d2cf384cd3a95950b19f6e7eadf02b0e6108ae977c68229f46f6b50993f4"
+  },
+  "score_threshold_for_signal": 0.05,
+  "iou_threshold_for_eval": 0.5,
+  "artifact_paths": {
+    "calibrated_checkpoint": "C:\\Users\\Varun\\Desktop\\acci\\models\\accident\\calibrated_accident_detector.pth",
+    "test_results": "C:\\Users\\Varun\\Desktop\\acci\\reports\\accident\\test_results_phase6.json"
+  }
+}

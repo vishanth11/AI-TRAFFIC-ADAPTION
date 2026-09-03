@@ -1,0 +1,50 @@
+{
+  "near_miss_DTC_FM": {
+    "class_0": {
+      "count": 1867,
+      "pct": 74.44
+    },
+    "class_1": {
+      "count": 641,
+      "pct": 25.56
+    },
+    "verdict": "MODERATELY_IMBALANCED"
+  },
+  "accident_object_level": {
+    "train": {
+      "accident": 2313,
+      "non_accident": 1807,
+      "total": 4120,
+      "accident_pct": 56.14
+    },
+    "validation": {
+      "accident": 338,
+      "non_accident": 340,
+      "total": 678,
+      "accident_pct": 49.85
+    },
+    "test": {
+      "accident": 391,
+      "non_accident": 211,
+      "total": 602,
+      "accident_pct": 64.95
+    }
+  },
+  "accident_image_level": {
+    "train": {
+      "images": 2122,
+      "images_with_accident_object": 2092,
+      "pct": 98.59
+    },
+    "validation": {
+      "images": 316,
+      "images_with_accident_object": 314,
+      "pct": 99.37
+    },
+    "test": {
+      "images": 325,
+      "images_with_accident_object": 324,
+      "pct": 99.69
+    }
+  }
+}

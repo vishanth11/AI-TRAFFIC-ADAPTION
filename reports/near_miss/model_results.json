@@ -1,0 +1,822 @@
+[
+  {
+    "run": "dummy_baseline",
+    "config": "A_offline_full_no_fesafety",
+    "model": "DummyClassifier",
+    "n_features": 14,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.7443052391799544,
+      "precision_class1": 0.0,
+      "recall_class1": 0.0,
+      "f1_class1": 0.0,
+      "roc_auc": 0.5,
+      "pr_auc": 0.25569476082004555,
+      "TP": 0,
+      "TN": 1307,
+      "FP": 0,
+      "FN": 449,
+      "FPR": 0.0,
+      "FNR": 1.0,
+      "confusion_matrix": [
+        [
+          1307,
+          0
+        ],
+        [
+          449,
+          0
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.7446808510638298,
+      "precision_class1": 0.0,
+      "recall_class1": 0.0,
+      "f1_class1": 0.0,
+      "roc_auc": 0.5,
+      "pr_auc": 0.2553191489361702,
+      "TP": 0,
+      "TN": 280,
+      "FP": 0,
+      "FN": 96,
+      "FPR": 0.0,
+      "FNR": 1.0,
+      "confusion_matrix": [
+        [
+          280,
+          0
+        ],
+        [
+          96,
+          0
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.7446808510638298,
+      "precision_class1": 0.0,
+      "recall_class1": 0.0,
+      "f1_class1": 0.0,
+      "roc_auc": 0.5,
+      "pr_auc": 0.2553191489361702,
+      "TP": 0,
+      "TN": 280,
+      "FP": 0,
+      "FN": 96,
+      "FPR": 0.0,
+      "FNR": 1.0,
+      "confusion_matrix": [
+        [
+          280,
+          0
+        ],
+        [
+          96,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "run": "logistic_regression_A",
+    "config": "A_offline_full_no_fesafety",
+    "model": "LogisticRegression",
+    "n_features": 14,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.8149202733485194,
+      "precision_class1": 0.6006493506493507,
+      "recall_class1": 0.8240534521158129,
+      "f1_class1": 0.6948356807511737,
+      "roc_auc": 0.9087404978844427,
+      "pr_auc": 0.81250617196125,
+      "TP": 370,
+      "TN": 1061,
+      "FP": 246,
+      "FN": 79,
+      "FPR": 0.18821729150726854,
+      "FNR": 0.1759465478841871,
+      "confusion_matrix": [
+        [
+          1061,
+          246
+        ],
+        [
+          79,
+          370
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.824468085106383,
+      "precision_class1": 0.6102941176470589,
+      "recall_class1": 0.8645833333333334,
+      "f1_class1": 0.7155172413793104,
+      "roc_auc": 0.9164434523809524,
+      "pr_auc": 0.8453899619126206,
+      "TP": 83,
+      "TN": 227,
+      "FP": 53,
+      "FN": 13,
+      "FPR": 0.18928571428571428,
+      "FNR": 0.13541666666666666,
+      "confusion_matrix": [
+        [
+          227,
+          53
+        ],
+        [
+          13,
+          83
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.8058510638297872,
+      "precision_class1": 0.5864661654135338,
+      "recall_class1": 0.8125,
+      "f1_class1": 0.6812227074235808,
+      "roc_auc": 0.9123883928571428,
+      "pr_auc": 0.8176314140426966,
+      "TP": 78,
+      "TN": 225,
+      "FP": 55,
+      "FN": 18,
+      "FPR": 0.19642857142857142,
+      "FNR": 0.1875,
+      "confusion_matrix": [
+        [
+          225,
+          55
+        ],
+        [
+          18,
+          78
+        ]
+      ]
+    }
+  },
+  {
+    "run": "logistic_regression_B",
+    "config": "B_offline_full_with_fesafety",
+    "model": "LogisticRegression",
+    "n_features": 15,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.8171981776765376,
+      "precision_class1": 0.6049180327868853,
+      "recall_class1": 0.821826280623608,
+      "f1_class1": 0.6968838526912181,
+      "roc_auc": 0.9093471337308275,
+      "pr_auc": 0.8137821043510878,
+      "TP": 369,
+      "TN": 1066,
+      "FP": 241,
+      "FN": 80,
+      "FPR": 0.18439173680183626,
+      "FNR": 0.17817371937639198,
+      "confusion_matrix": [
+        [
+          1066,
+          241
+        ],
+        [
+          80,
+          369
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.8218085106382979,
+      "precision_class1": 0.6074074074074074,
+      "recall_class1": 0.8541666666666666,
+      "f1_class1": 0.70995670995671,
+      "roc_auc": 0.9121279761904761,
+      "pr_auc": 0.8386682212651068,
+      "TP": 82,
+      "TN": 227,
+      "FP": 53,
+      "FN": 14,
+      "FPR": 0.18928571428571428,
+      "FNR": 0.14583333333333334,
+      "confusion_matrix": [
+        [
+          227,
+          53
+        ],
+        [
+          14,
+          82
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.8085106382978723,
+      "precision_class1": 0.5895522388059702,
+      "recall_class1": 0.8229166666666666,
+      "f1_class1": 0.6869565217391305,
+      "roc_auc": 0.9130952380952381,
+      "pr_auc": 0.8131803499208917,
+      "TP": 79,
+      "TN": 225,
+      "FP": 55,
+      "FN": 17,
+      "FPR": 0.19642857142857142,
+      "FNR": 0.17708333333333334,
+      "confusion_matrix": [
+        [
+          225,
+          55
+        ],
+        [
+          17,
+          79
+        ]
+      ]
+    }
+  },
+  {
+    "run": "logistic_regression_D",
+    "config": "D_deployment_realistic",
+    "model": "LogisticRegression",
+    "n_features": 12,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.7864464692482915,
+      "precision_class1": 0.5544117647058824,
+      "recall_class1": 0.8396436525612472,
+      "f1_class1": 0.6678476527900797,
+      "roc_auc": 0.8956330739226677,
+      "pr_auc": 0.7719349518439342,
+      "TP": 377,
+      "TN": 1004,
+      "FP": 303,
+      "FN": 72,
+      "FPR": 0.23182861514919664,
+      "FNR": 0.1603563474387528,
+      "confusion_matrix": [
+        [
+          1004,
+          303
+        ],
+        [
+          72,
+          377
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.7925531914893617,
+      "precision_class1": 0.56,
+      "recall_class1": 0.875,
+      "f1_class1": 0.6829268292682927,
+      "roc_auc": 0.8975074404761904,
+      "pr_auc": 0.7728975143189344,
+      "TP": 84,
+      "TN": 214,
+      "FP": 66,
+      "FN": 12,
+      "FPR": 0.2357142857142857,
+      "FNR": 0.125,
+      "confusion_matrix": [
+        [
+          214,
+          66
+        ],
+        [
+          12,
+          84
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.7898936170212766,
+      "precision_class1": 0.5594405594405595,
+      "recall_class1": 0.8333333333333334,
+      "f1_class1": 0.6694560669456067,
+      "roc_auc": 0.8977306547619048,
+      "pr_auc": 0.773352927953135,
+      "TP": 80,
+      "TN": 217,
+      "FP": 63,
+      "FN": 16,
+      "FPR": 0.225,
+      "FNR": 0.16666666666666666,
+      "confusion_matrix": [
+        [
+          217,
+          63
+        ],
+        [
+          16,
+          80
+        ]
+      ]
+    }
+  },
+  {
+    "run": "random_forest_A",
+    "config": "A_offline_full_no_fesafety",
+    "model": "RandomForestClassifier",
+    "n_features": 14,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.9732346241457859,
+      "precision_class1": 0.905241935483871,
+      "recall_class1": 1.0,
+      "f1_class1": 0.9502645502645503,
+      "roc_auc": 0.999575695714186,
+      "pr_auc": 0.998780854096649,
+      "TP": 449,
+      "TN": 1260,
+      "FP": 47,
+      "FN": 0,
+      "FPR": 0.035960214231063506,
+      "FNR": 0.0,
+      "confusion_matrix": [
+        [
+          1260,
+          47
+        ],
+        [
+          0,
+          449
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.8856382978723404,
+      "precision_class1": 0.7623762376237624,
+      "recall_class1": 0.8020833333333334,
+      "f1_class1": 0.7817258883248731,
+      "roc_auc": 0.9305059523809525,
+      "pr_auc": 0.853968533023022,
+      "TP": 77,
+      "TN": 256,
+      "FP": 24,
+      "FN": 19,
+      "FPR": 0.08571428571428572,
+      "FNR": 0.19791666666666666,
+      "confusion_matrix": [
+        [
+          256,
+          24
+        ],
+        [
+          19,
+          77
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.8670212765957447,
+      "precision_class1": 0.7129629629629629,
+      "recall_class1": 0.8020833333333334,
+      "f1_class1": 0.7549019607843137,
+      "roc_auc": 0.929017857142857,
+      "pr_auc": 0.8304048406571906,
+      "TP": 77,
+      "TN": 249,
+      "FP": 31,
+      "FN": 19,
+      "FPR": 0.11071428571428571,
+      "FNR": 0.19791666666666666,
+      "confusion_matrix": [
+        [
+          249,
+          31
+        ],
+        [
+          19,
+          77
+        ]
+      ]
+    }
+  },
+  {
+    "run": "random_forest_B",
+    "config": "B_offline_full_with_fesafety",
+    "model": "RandomForestClassifier",
+    "n_features": 15,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.974373576309795,
+      "precision_class1": 0.9089068825910931,
+      "recall_class1": 1.0,
+      "f1_class1": 0.9522799575821845,
+      "roc_auc": 0.9995416150486587,
+      "pr_auc": 0.9986832836111935,
+      "TP": 449,
+      "TN": 1262,
+      "FP": 45,
+      "FN": 0,
+      "FPR": 0.03442999234889059,
+      "FNR": 0.0,
+      "confusion_matrix": [
+        [
+          1262,
+          45
+        ],
+        [
+          0,
+          449
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.8829787234042553,
+      "precision_class1": 0.7549019607843137,
+      "recall_class1": 0.8020833333333334,
+      "f1_class1": 0.7777777777777778,
+      "roc_auc": 0.9314732142857143,
+      "pr_auc": 0.8520074935983745,
+      "TP": 77,
+      "TN": 255,
+      "FP": 25,
+      "FN": 19,
+      "FPR": 0.08928571428571429,
+      "FNR": 0.19791666666666666,
+      "confusion_matrix": [
+        [
+          255,
+          25
+        ],
+        [
+          19,
+          77
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.8617021276595744,
+      "precision_class1": 0.6929824561403509,
+      "recall_class1": 0.8229166666666666,
+      "f1_class1": 0.7523809523809524,
+      "roc_auc": 0.9295014880952381,
+      "pr_auc": 0.8349571600134703,
+      "TP": 79,
+      "TN": 245,
+      "FP": 35,
+      "FN": 17,
+      "FPR": 0.125,
+      "FNR": 0.17708333333333334,
+      "confusion_matrix": [
+        [
+          245,
+          35
+        ],
+        [
+          17,
+          79
+        ]
+      ]
+    }
+  },
+  {
+    "run": "random_forest_D",
+    "config": "D_deployment_realistic",
+    "model": "RandomForestClassifier",
+    "n_features": 12,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.9658314350797267,
+      "precision_class1": 0.8821218074656189,
+      "recall_class1": 1.0,
+      "f1_class1": 0.9373695198329853,
+      "roc_auc": 0.9988429614053502,
+      "pr_auc": 0.9965911758475137,
+      "TP": 449,
+      "TN": 1247,
+      "FP": 60,
+      "FN": 0,
+      "FPR": 0.045906656465187455,
+      "FNR": 0.0,
+      "confusion_matrix": [
+        [
+          1247,
+          60
+        ],
+        [
+          0,
+          449
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.8590425531914894,
+      "precision_class1": 0.7047619047619048,
+      "recall_class1": 0.7708333333333334,
+      "f1_class1": 0.736318407960199,
+      "roc_auc": 0.9141741071428571,
+      "pr_auc": 0.7900970116475117,
+      "TP": 74,
+      "TN": 249,
+      "FP": 31,
+      "FN": 22,
+      "FPR": 0.11071428571428571,
+      "FNR": 0.22916666666666666,
+      "confusion_matrix": [
+        [
+          249,
+          31
+        ],
+        [
+          22,
+          74
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.8537234042553191,
+      "precision_class1": 0.6880733944954128,
+      "recall_class1": 0.78125,
+      "f1_class1": 0.7317073170731707,
+      "roc_auc": 0.9116443452380952,
+      "pr_auc": 0.7774033753958709,
+      "TP": 75,
+      "TN": 246,
+      "FP": 34,
+      "FN": 21,
+      "FPR": 0.12142857142857143,
+      "FNR": 0.21875,
+      "confusion_matrix": [
+        [
+          246,
+          34
+        ],
+        [
+          21,
+          75
+        ]
+      ]
+    }
+  },
+  {
+    "run": "gradient_boosting_A",
+    "config": "A_offline_full_no_fesafety",
+    "model": "GradientBoostingClassifier",
+    "n_features": 14,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.9037585421412301,
+      "precision_class1": 0.7554744525547445,
+      "recall_class1": 0.9220489977728286,
+      "f1_class1": 0.8304914744232698,
+      "roc_auc": 0.974845912790985,
+      "pr_auc": 0.9358770253787354,
+      "TP": 414,
+      "TN": 1173,
+      "FP": 134,
+      "FN": 35,
+      "FPR": 0.10252486610558531,
+      "FNR": 0.0779510022271715,
+      "confusion_matrix": [
+        [
+          1173,
+          134
+        ],
+        [
+          35,
+          414
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.8377659574468085,
+      "precision_class1": 0.6495726495726496,
+      "recall_class1": 0.7916666666666666,
+      "f1_class1": 0.7136150234741784,
+      "roc_auc": 0.9228794642857143,
+      "pr_auc": 0.8231534501778349,
+      "TP": 76,
+      "TN": 239,
+      "FP": 41,
+      "FN": 20,
+      "FPR": 0.14642857142857144,
+      "FNR": 0.20833333333333334,
+      "confusion_matrix": [
+        [
+          239,
+          41
+        ],
+        [
+          20,
+          76
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.8457446808510638,
+      "precision_class1": 0.6610169491525424,
+      "recall_class1": 0.8125,
+      "f1_class1": 0.7289719626168224,
+      "roc_auc": 0.9156994047619048,
+      "pr_auc": 0.8358903428251848,
+      "TP": 78,
+      "TN": 240,
+      "FP": 40,
+      "FN": 18,
+      "FPR": 0.14285714285714285,
+      "FNR": 0.1875,
+      "confusion_matrix": [
+        [
+          240,
+          40
+        ],
+        [
+          18,
+          78
+        ]
+      ]
+    }
+  },
+  {
+    "run": "gradient_boosting_B",
+    "config": "B_offline_full_with_fesafety",
+    "model": "GradientBoostingClassifier",
+    "n_features": 15,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.9048974943052391,
+      "precision_class1": 0.7591911764705882,
+      "recall_class1": 0.9198218262806236,
+      "f1_class1": 0.8318227593152064,
+      "roc_auc": 0.9749822354530938,
+      "pr_auc": 0.9363895376287795,
+      "TP": 413,
+      "TN": 1176,
+      "FP": 131,
+      "FN": 36,
+      "FPR": 0.10022953328232594,
+      "FNR": 0.0801781737193764,
+      "confusion_matrix": [
+        [
+          1176,
+          131
+        ],
+        [
+          36,
+          413
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.8377659574468085,
+      "precision_class1": 0.6521739130434783,
+      "recall_class1": 0.78125,
+      "f1_class1": 0.7109004739336493,
+      "roc_auc": 0.9223586309523809,
+      "pr_auc": 0.8234856869483691,
+      "TP": 75,
+      "TN": 240,
+      "FP": 40,
+      "FN": 21,
+      "FPR": 0.14285714285714285,
+      "FNR": 0.21875,
+      "confusion_matrix": [
+        [
+          240,
+          40
+        ],
+        [
+          21,
+          75
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.8404255319148937,
+      "precision_class1": 0.65,
+      "recall_class1": 0.8125,
+      "f1_class1": 0.7222222222222222,
+      "roc_auc": 0.9170758928571429,
+      "pr_auc": 0.8390827075684131,
+      "TP": 78,
+      "TN": 238,
+      "FP": 42,
+      "FN": 18,
+      "FPR": 0.15,
+      "FNR": 0.1875,
+      "confusion_matrix": [
+        [
+          238,
+          42
+        ],
+        [
+          18,
+          78
+        ]
+      ]
+    }
+  },
+  {
+    "run": "gradient_boosting_D",
+    "config": "D_deployment_realistic",
+    "model": "GradientBoostingClassifier",
+    "n_features": 12,
+    "random_seed": 42,
+    "metrics_train": {
+      "threshold": 0.5,
+      "accuracy": 0.8917995444191344,
+      "precision_class1": 0.7402597402597403,
+      "recall_class1": 0.888641425389755,
+      "f1_class1": 0.8076923076923077,
+      "roc_auc": 0.963923911506144,
+      "pr_auc": 0.9035516406915655,
+      "TP": 399,
+      "TN": 1167,
+      "FP": 140,
+      "FN": 50,
+      "FPR": 0.10711553175210406,
+      "FNR": 0.111358574610245,
+      "confusion_matrix": [
+        [
+          1167,
+          140
+        ],
+        [
+          50,
+          399
+        ]
+      ]
+    },
+    "metrics_validation": {
+      "threshold": 0.5,
+      "accuracy": 0.8404255319148937,
+      "precision_class1": 0.6666666666666666,
+      "recall_class1": 0.75,
+      "f1_class1": 0.7058823529411765,
+      "roc_auc": 0.9063058035714285,
+      "pr_auc": 0.7657069631503437,
+      "TP": 72,
+      "TN": 244,
+      "FP": 36,
+      "FN": 24,
+      "FPR": 0.12857142857142856,
+      "FNR": 0.25,
+      "confusion_matrix": [
+        [
+          244,
+          36
+        ],
+        [
+          24,
+          72
+        ]
+      ]
+    },
+    "metrics_test": {
+      "threshold": 0.5,
+      "accuracy": 0.8430851063829787,
+      "precision_class1": 0.6554621848739496,
+      "recall_class1": 0.8125,
+      "f1_class1": 0.7255813953488373,
+      "roc_auc": 0.9008370535714285,
+      "pr_auc": 0.748869191287238,
+      "TP": 78,
+      "TN": 239,
+      "FP": 41,
+      "FN": 18,
+      "FPR": 0.14642857142857144,
+      "FNR": 0.1875,
+      "confusion_matrix": [
+        [
+          239,
+          41
+        ],
+        [
+          18,
+          78
+        ]
+      ]
+    }
+  }
+]

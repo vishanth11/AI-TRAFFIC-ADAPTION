@@ -1,0 +1,110 @@
+{
+  "split": "test",
+  "metrics": {
+    "overall": {
+      "mAP_50_95": 0.04110066056681308,
+      "mAP_50": 0.09874400794089833,
+      "mAP_75": 0.036872254605139335,
+      "mAP_small": 0.006641855835047016,
+      "mAP_medium": 0.037112551192394365,
+      "mAP_large": 0.18317741618767738,
+      "AR_1": 0.06611374407582939,
+      "AR_10": 0.10094786729857821,
+      "AR_100": 0.10213270142180093,
+      "AR_small": 0.04928571428571429,
+      "AR_medium": 0.11422764227642276,
+      "AR_large": 0.225
+    },
+    "per_class": {
+      "accident": {
+        "AP_50": 0.0,
+        "AP_50_95": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "non_accident": {
+        "AP_50": 0.19748801588179662,
+        "AP_50_95": 0.08220132113362616,
+        "precision": 0.19748801588179662,
+        "recall": 0.2042654028436019
+      }
+    }
+  },
+  "threshold_analysis": [
+    {
+      "threshold": 0.1,
+      "true_positives": 74,
+      "false_positives": 346,
+      "false_negatives": 528,
+      "precision": 0.1762,
+      "recall": 0.1229
+    },
+    {
+      "threshold": 0.2,
+      "true_positives": 48,
+      "false_positives": 90,
+      "false_negatives": 554,
+      "precision": 0.3478,
+      "recall": 0.0797
+    },
+    {
+      "threshold": 0.3,
+      "true_positives": 32,
+      "false_positives": 28,
+      "false_negatives": 570,
+      "precision": 0.5333,
+      "recall": 0.0532
+    },
+    {
+      "threshold": 0.4,
+      "true_positives": 20,
+      "false_positives": 9,
+      "false_negatives": 582,
+      "precision": 0.6897,
+      "recall": 0.0332
+    },
+    {
+      "threshold": 0.5,
+      "true_positives": 7,
+      "false_positives": 2,
+      "false_negatives": 595,
+      "precision": 0.7778,
+      "recall": 0.0116
+    },
+    {
+      "threshold": 0.6,
+      "true_positives": 5,
+      "false_positives": 1,
+      "false_negatives": 597,
+      "precision": 0.8333,
+      "recall": 0.0083
+    },
+    {
+      "threshold": 0.7,
+      "true_positives": 3,
+      "false_positives": 0,
+      "false_negatives": 599,
+      "precision": 1.0,
+      "recall": 0.005
+    },
+    {
+      "threshold": 0.8,
+      "true_positives": 3,
+      "false_positives": 0,
+      "false_negatives": 599,
+      "precision": 1.0,
+      "recall": 0.005
+    },
+    {
+      "threshold": 0.9,
+      "true_positives": 3,
+      "false_positives": 0,
+      "false_negatives": 599,
+      "precision": 1.0,
+      "recall": 0.005
+    }
+  ],
+  "num_images": 325,
+  "num_ground_truth_objects": 602,
+  "num_predictions": 782
+}

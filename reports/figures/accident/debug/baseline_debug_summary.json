@@ -1,0 +1,207 @@
+{
+  "checkpoint": "models/accident/best_detector.pth (Phase 5 baseline, num_classes=2)",
+  "num_examples": 24,
+  "score_threshold": 0.05,
+  "predicted_label_counts_dataset_space": {
+    "non_accident": 153
+  },
+  "mean_score_by_label": {
+    "accident": null,
+    "non_accident": 0.1405
+  },
+  "max_score_overall": 0.6044,
+  "images": [
+    {
+      "image_id": 5,
+      "gt_accident": 1,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 2,
+      "max_score": 0.07466987520456314
+    },
+    {
+      "image_id": 13,
+      "gt_accident": 1,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 8,
+      "max_score": 0.33274856209754944
+    },
+    {
+      "image_id": 14,
+      "gt_accident": 0,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 3,
+      "max_score": 0.14729508757591248
+    },
+    {
+      "image_id": 17,
+      "gt_accident": 2,
+      "gt_non_accident": 8,
+      "pred_accident": 0,
+      "pred_non_accident": 8,
+      "max_score": 0.2947450578212738
+    },
+    {
+      "image_id": 21,
+      "gt_accident": 1,
+      "gt_non_accident": 5,
+      "pred_accident": 0,
+      "pred_non_accident": 8,
+      "max_score": 0.18734830617904663
+    },
+    {
+      "image_id": 29,
+      "gt_accident": 1,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 11,
+      "max_score": 0.27949491143226624
+    },
+    {
+      "image_id": 33,
+      "gt_accident": 2,
+      "gt_non_accident": 0,
+      "pred_accident": 0,
+      "pred_non_accident": 1,
+      "max_score": 0.21146002411842346
+    },
+    {
+      "image_id": 38,
+      "gt_accident": 1,
+      "gt_non_accident": 3,
+      "pred_accident": 0,
+      "pred_non_accident": 23,
+      "max_score": 0.2537141740322113
+    },
+    {
+      "image_id": 44,
+      "gt_accident": 1,
+      "gt_non_accident": 5,
+      "pred_accident": 0,
+      "pred_non_accident": 10,
+      "max_score": 0.2290373146533966
+    },
+    {
+      "image_id": 45,
+      "gt_accident": 1,
+      "gt_non_accident": 6,
+      "pred_accident": 0,
+      "pred_non_accident": 10,
+      "max_score": 0.2288575917482376
+    },
+    {
+      "image_id": 48,
+      "gt_accident": 1,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 1,
+      "max_score": 0.051104698330163956
+    },
+    {
+      "image_id": 53,
+      "gt_accident": 1,
+      "gt_non_accident": 7,
+      "pred_accident": 0,
+      "pred_non_accident": 10,
+      "max_score": 0.31248944997787476
+    },
+    {
+      "image_id": 56,
+      "gt_accident": 1,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 1,
+      "max_score": 0.06464192271232605
+    },
+    {
+      "image_id": 58,
+      "gt_accident": 1,
+      "gt_non_accident": 5,
+      "pred_accident": 0,
+      "pred_non_accident": 13,
+      "max_score": 0.2226778119802475
+    },
+    {
+      "image_id": 59,
+      "gt_accident": 1,
+      "gt_non_accident": 3,
+      "pred_accident": 0,
+      "pred_non_accident": 0,
+      "max_score": 0.0
+    },
+    {
+      "image_id": 66,
+      "gt_accident": 1,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 5,
+      "max_score": 0.295009046792984
+    },
+    {
+      "image_id": 68,
+      "gt_accident": 1,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 3,
+      "max_score": 0.6044049859046936
+    },
+    {
+      "image_id": 77,
+      "gt_accident": 1,
+      "gt_non_accident": 10,
+      "pred_accident": 0,
+      "pred_non_accident": 9,
+      "max_score": 0.32921838760375977
+    },
+    {
+      "image_id": 80,
+      "gt_accident": 2,
+      "gt_non_accident": 0,
+      "pred_accident": 0,
+      "pred_non_accident": 2,
+      "max_score": 0.16900917887687683
+    },
+    {
+      "image_id": 86,
+      "gt_accident": 1,
+      "gt_non_accident": 2,
+      "pred_accident": 0,
+      "pred_non_accident": 5,
+      "max_score": 0.34589409828186035
+    },
+    {
+      "image_id": 89,
+      "gt_accident": 1,
+      "gt_non_accident": 3,
+      "pred_accident": 0,
+      "pred_non_accident": 5,
+      "max_score": 0.3422371447086334
+    },
+    {
+      "image_id": 100,
+      "gt_accident": 1,
+      "gt_non_accident": 4,
+      "pred_accident": 0,
+      "pred_non_accident": 11,
+      "max_score": 0.36617523431777954
+    },
+    {
+      "image_id": 103,
+      "gt_accident": 1,
+      "gt_non_accident": 5,
+      "pred_accident": 0,
+      "pred_non_accident": 4,
+      "max_score": 0.5886154174804688
+    },
+    {
+      "image_id": 110,
+      "gt_accident": 1,
+      "gt_non_accident": 3,
+      "pred_accident": 0,
+      "pred_non_accident": 0,
+      "max_score": 0.0
+    }
+  ]
+}

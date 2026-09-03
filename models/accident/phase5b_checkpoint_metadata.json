@@ -1,0 +1,36 @@
+{
+  "checkpoint_path": "C:\\Users\\Varun\\Desktop\\acci\\models\\accident\\phase5b_interrupted_checkpoint.pth",
+  "model_checkpoint_source": "models\\accident\\phase5b_expB_best_last.pth",
+  "completed_epoch": 1,
+  "best_score_tuple": [
+    0.7114,
+    0.4047
+  ],
+  "best_epoch": 1,
+  "history_path": "reports\\accident\\phase5b_exp_b_history.json",
+  "config": {
+    "seed": 42,
+    "model": "fasterrcnn_mobilenet_v3_large_320_fpn",
+    "num_classes": 3,
+    "image_size": [
+      320,
+      320
+    ],
+    "batch_size": 4,
+    "epochs": 25,
+    "learning_rate": 0.005,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "lr_scheduler_step": 8,
+    "lr_scheduler_gamma": 0.1,
+    "num_workers": 0,
+    "pretrained": true,
+    "device": "cpu",
+    "early_stopping_patience": 6,
+    "min_improvement": 0.002,
+    "score_threshold": 0.05
+  },
+  "optimizer_state_included": false,
+  "optimizer_note": "SGD momentum buffers lost on process stop; scheduler reconstructed from epoch. Resume re-warms momentum.",
+  "baseline_model_untouched": "models/accident/best_detector.pth"
+}
