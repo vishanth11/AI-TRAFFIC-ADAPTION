@@ -1,0 +1,367 @@
+# Traffic AI — Computer Vision Module
+# Member 2 — Vehicle Perception System
+# Complete Project Documentation
+# =============================================================================
+
+## TABLE OF CONTENTS
+1. Project Overview
+2. System Requirements
+3. Project Structure
+4. Environment Setup
+5. Models Used
+6. Scripts — What Each File Does
+7. How to Run Each Script
+8. API Reference (Phase 7)
+9. JSON Output Format
+10. Integration Guide for Other Team Members
+
+# =============================================================================
+# 1. PROJECT OVERVIEW
+# =============================================================================
+
+This module is responsible for:
+  - Vehicle detection (car, bus, truck, motorcycle)
+  - Pedestrian detection (person)
+  - Emergency vehicle detection (ambulance, fire truck, police)
+  - Multi-object tracking with persistent IDs (ByteTrack)
+  - Vehicle position, direction, speed, trajectory
+  - Detection confidence scores
+  - Standardized JSON output
+  - REST API for team integration
+
+# =============================================================================
+# 2. SYSTEM REQUIREMENTS
+# =============================================================================
+
+Hardware:
+  - GPU: NVIDIA GeForce RTX 4050 Laptop GPU (CUDA 12.8)
+  - CPU fallback supported
+
+Software:
+  - OS: Windows 11
+  - Python: 3.12.9  (installed at E:\Python312)
+  - Virtual Environment: E:\Traffic_AI\venv
+
+Python Packages:
+  - torch==2.11.0+cu128
+  - ultralytics==8.4.138
+  - opencv-python==5.0.0
+  - fastapi
+  - uvicorn
+  - python-multipart
+  - huggingface_hub
+
+# =============================================================================
+# 3. PROJECT STRUCTURE
+# =============================================================================
+
+E:\Traffic_AI\
+│
+├── venv\                        ← Python virtual environment (Python 3.12)
+│
+├── models\
+│   ├── yolo11n.pt               ← General traffic detection model (Ultralytics YOLO11 Nano)
+│   └── emergency.pt             ← Emergency vehicle detection model (YOLOv8 Nano)
+│
+├── inputs\                      ← Put your test images and videos here
+│   ├── tests.jpg
+│   └── trafffic.mp4
+│
+├── outputs\                     ← All detection results saved here
+│   ├── image_test\
+│   ├── image_traffic\
+│   ├── tracking\
+│   ├── analysis\
+│   ├── image_emergency\
+│   └── perception_output.json   ← Latest unified JSON output
+│
+├── uploads\                     ← API uploads stored here
+│
+├── test_yolo.py                 ← Phase 1: Basic YOLO test
+├── detect_traffic.py            ← Phase 2: Traffic class filtering
+├── track_vehicles.py            ← Phase 3: ByteTrack tracking
+├── analyze_vehicles.py          ← Phase 4: Speed, direction, trajectory
+├── detect_emergency.py          ← Phase 5: Emergency vehicle detection
+├── unified_pipeline.py          ← Phase 6: Combined pipeline + JSON output
+└── api.py                       ← Phase 7: REST API
+
+# =============================================================================
+# 4. ENVIRONMENT SETUP
+# =============================================================================
+
+Step 1 — Open PowerShell and activate the virtual environment:
+
+    cd E:\Traffic_AI
+    .\venv\Scripts\Activate.ps1
+
+You should see (venv) at the start of your prompt.
+
+Step 2 — Verify everything is installed:
+
+    python -c "import torch; print('CUDA:', torch.cuda.is_available())"
+    python -c "import ultralytics; print(ultralytics.__version__)"
+    python -c "import cv2; print(cv2.__version__)"
+
+Expected output:
+    CUDA: True
+    8.4.138
+    5.0.0
+
+# =============================================================================
+# 5. MODELS USED
+# =============================================================================
+
+1. yolo11n.pt — General Traffic Detection
+   - Source: Ultralytics pretrained (auto-downloaded)
+   - Trained on: COCO dataset (80 classes)
+   - Used for: car, bus, truck, motorcycle, person detection + ByteTrack tracking
+   - Size: ~5MB
+   - Location: E:\Traffic_AI\models\yolo11n.pt
+
+2. emergency.pt — Emergency Vehicle Detection
+   - Source: Hugging Face (sakethGurram/emergency-yolo)
+   - Classes: emergency_vehicle (0), non_emergency_vehicle (1)
+   - Used for: flagging emergency vehicles in each frame
+   - Size: ~6MB
+   - Location: E:\Traffic_AI\models\emergency.pt
+
+# =============================================================================
+# 6. SCRIPTS — WHAT EACH FILE DOES
+# =============================================================================
+
+test_yolo.py        — Phase 1
+  Tests that YOLO loads and runs correctly on an image or video.
+  Use this to verify the setup is working.
+
+detect_traffic.py   — Phase 2
+  Runs YOLO detection filtered to traffic classes only:
+  car, bus, truck, motorcycle, person.
+  Saves annotated output image/video.
+
+track_vehicles.py   — Phase 3
+  Adds ByteTrack multi-object tracking.
+  Each vehicle gets a persistent ID across frames.
+  Works on video only.
+
+analyze_vehicles.py — Phase 4
+  Extends tracking with:
+  - Center position (cx, cy)
+  - Movement direction (left/right/up/down)
+  - Approximate speed in km/h
+  - Trajectory (last 30 positions)
+
+detect_emergency.py — Phase 5
+  Runs the emergency.pt model separately.
+  Flags emergency_vehicle vs non_emergency_vehicle.
+  Works on both image and video.
+
+unified_pipeline.py — Phase 6
+  Combines yolo11n.pt + emergency.pt into one pipeline.
+  Outputs full structured JSON to:
+  E:\Traffic_AI\outputs\perception_output.json
+
+api.py              — Phase 7
+  FastAPI REST API that wraps the unified pipeline.
+  Other team members can send images/videos and receive JSON.
+
+# =============================================================================
+# 7. HOW TO RUN EACH SCRIPT
+# =============================================================================
+
+Always activate venv first:
+    cd E:\Traffic_AI
+    .\venv\Scripts\Activate.ps1
+
+--- Phase 1: Test YOLO ---
+    python test_yolo.py image E:\Traffic_AI\inputs\tests.jpg
+    python test_yolo.py video E:\Traffic_AI\inputs\trafffic.mp4
+
+--- Phase 2: Traffic Detection ---
+    python detect_traffic.py image E:\Traffic_AI\inputs\tests.jpg
+    python detect_traffic.py video E:\Traffic_AI\inputs\trafffic.mp4
+
+--- Phase 3: ByteTrack Tracking (video only) ---
+    python track_vehicles.py E:\Traffic_AI\inputs\trafffic.mp4
+
+--- Phase 4: Full Vehicle Analysis (video only) ---
+    python analyze_vehicles.py E:\Traffic_AI\inputs\trafffic.mp4
+
+--- Phase 5: Emergency Detection ---
+    python detect_emergency.py image E:\Traffic_AI\inputs\tests.jpg
+    python detect_emergency.py video E:\Traffic_AI\inputs\trafffic.mp4
+
+--- Phase 6: Unified Pipeline + JSON ---
+    python unified_pipeline.py image E:\Traffic_AI\inputs\tests.jpg
+    python unified_pipeline.py video E:\Traffic_AI\inputs\trafffic.mp4
+
+--- Phase 7: Start the API ---
+    python api.py
+    Then open: http://localhost:8000/docs
+
+# =============================================================================
+# 8. API REFERENCE (PHASE 7)
+# =============================================================================
+
+Start the API:
+    cd E:\Traffic_AI
+    .\venv\Scripts\Activate.ps1
+    python api.py
+
+Base URL: http://localhost:8000
+Interactive Docs: http://localhost:8000/docs
+
+--- Endpoints ---
+
+GET  /health
+  Returns API status and model load confirmation.
+  Response:
+    { "status": "ok", "models_loaded": true }
+
+GET  /results
+  Returns the latest saved perception_output.json.
+  Use this to fetch results after a previous analyze call.
+
+POST /analyze/image
+  Upload an image file (jpg, jpeg, png).
+  Returns JSON with all detections for that image.
+  How to use in browser:
+    1. Go to http://localhost:8000/docs
+    2. Click POST /analyze/image
+    3. Click "Try it out"
+    4. Click "Choose File" and select your image
+    5. Click "Execute"
+
+POST /analyze/video
+  Upload a video file (mp4, avi, mov).
+  Returns JSON with detections for every frame.
+  Same steps as above but select a video file.
+
+--- How to call from Python (other team members) ---
+
+    import requests
+
+    # Health check
+    r = requests.get("http://localhost:8000/health")
+    print(r.json())
+
+    # Analyze an image
+    with open("your_image.jpg", "rb") as f:
+        r = requests.post(
+            "http://localhost:8000/analyze/image",
+            files={"file": ("your_image.jpg", f, "image/jpeg")}
+        )
+    print(r.json())
+
+    # Get latest results
+    r = requests.get("http://localhost:8000/results")
+    data = r.json()
+
+# =============================================================================
+# 9. JSON OUTPUT FORMAT
+# =============================================================================
+
+The unified pipeline and API produce JSON in this format:
+
+[
+  {
+    "frame": 1,
+    "detections": [
+      {
+        "vehicle_id": 17,
+        "type": "car",
+        "confidence": 0.88,
+        "bounding_box": {
+          "x1": 701,
+          "y1": 575,
+          "x2": 866,
+          "y2": 675
+        },
+        "position": {
+          "x": 783,
+          "y": 625
+        },
+        "speed": 34.2,
+        "direction": "right",
+        "trajectory": [
+          [770, 620],
+          [775, 622],
+          [778, 623],
+          [781, 624],
+          [783, 625]
+        ],
+        "tracking_status": "active",
+        "emergency": false
+      }
+    ]
+  }
+]
+
+Field Descriptions:
+  vehicle_id      — Persistent tracking ID (stays same across frames)
+  type            — vehicle class: car / bus / truck / motorcycle / person / emergency_vehicle
+  confidence      — Detection confidence score (0.0 to 1.0)
+  bounding_box    — Pixel coordinates of detection box (x1,y1 = top-left, x2,y2 = bottom-right)
+  position        — Center point of bounding box (cx, cy)
+  speed           — Approximate speed in km/h (estimated from pixel displacement)
+  direction       — Movement direction: left / right / up / down / unknown
+  trajectory      — Last 5 center positions of this vehicle
+  tracking_status — Always "active" for currently visible vehicles
+  emergency       — true if vehicle is flagged as emergency, false otherwise
+
+Notes on speed:
+  Speed is estimated using pixel displacement and PIXELS_PER_METER = 15.
+  This is an approximation. For accurate speed, calibrate PIXELS_PER_METER
+  based on your specific camera setup and known road dimensions.
+
+# =============================================================================
+# 10. INTEGRATION GUIDE FOR OTHER TEAM MEMBERS
+# =============================================================================
+
+Option A — Use the REST API (Recommended)
+  1. Ask Member 2 to start the API: python api.py
+  2. Send HTTP requests to http://<member2-ip>:8000
+  3. Use POST /analyze/image or POST /analyze/video
+  4. Parse the JSON response
+
+  Example Python integration:
+
+    import requests
+
+    API_URL = "http://192.168.x.x:8000"  # replace with Member 2's IP
+
+    def get_detections(image_path):
+        with open(image_path, "rb") as f:
+            r = requests.post(
+                f"{API_URL}/analyze/image",
+                files={"file": (image_path, f, "image/jpeg")}
+            )
+        return r.json()["detections"]
+
+    detections = get_detections("traffic_frame.jpg")
+    for d in detections:
+        print(d["vehicle_id"], d["type"], d["speed"], d["direction"])
+
+Option B — Use the JSON output file directly
+  After running unified_pipeline.py, the full output is saved to:
+  E:\Traffic_AI\outputs\perception_output.json
+
+  Other members can read this file directly:
+
+    import json
+    with open(r"E:\Traffic_AI\outputs\perception_output.json") as f:
+        data = json.load(f)
+    for frame in data:
+        for detection in frame["detections"]:
+            print(detection)
+
+Option C — Import the pipeline directly
+  Other members can import process_source from api.py:
+
+    import sys
+    sys.path.append(r"E:\Traffic_AI")
+    from api import process_source
+    results = process_source("traffic.mp4", is_video=True)
+
+# =============================================================================
+# END OF DOCUMENTATION
+# =============================================================================
