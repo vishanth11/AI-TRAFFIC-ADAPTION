@@ -1,0 +1,2 @@
+Current_Vehicles,Vehicle_Speed,Queue_Length,Previous_Junction_Flow,Time,Predicted_Traffic,Predicted_Peak,Congestion,Confidence,Signal_Decision,Green_Time
+50,35,20,40,12,0.11918968707323074,0.2188710868358612,LOW,82.72331729531288,NORMAL ADAPTIVE CONTROL,30
