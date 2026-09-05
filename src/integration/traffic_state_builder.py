@@ -1,6 +1,15 @@
 import numpy as np
 
 
+VEHICLE_TYPES = {
+    "car",
+    "motorcycle",
+    "bus",
+    "truck",
+    "emergency_vehicle"
+}
+
+
 class TrafficStateBuilder:
     """
     Converts Member 2 perception output into
@@ -94,8 +103,17 @@ class TrafficStateBuilder:
             if not isinstance(detection, dict):
                 continue
 
+            # Get detected object type
+            vehicle_type = detection.get("type")
+
+            # Ignore pedestrians and unknown object types
+            if vehicle_type not in VEHICLE_TYPES:
+                continue
+
+            # Get vehicle center position
             x, y = self._vehicle_center(detection)
 
+            # Find which sensor contains the vehicle
             for sensor in self.sensors:
 
                 if self._inside_region(x, y, sensor):
@@ -158,6 +176,18 @@ if __name__ == "__main__":
                 },
                 "speed": 20.0,
                 "direction": "left",
+                "emergency": False
+            },
+            {
+                "vehicle_id": 3,
+                "type": "person",
+                "confidence": 0.95,
+                "position": {
+                    "x": 500,
+                    "y": 300
+                },
+                "speed": 5.0,
+                "direction": "right",
                 "emergency": False
             }
         ]
