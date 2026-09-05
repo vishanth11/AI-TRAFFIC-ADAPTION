@@ -1,0 +1,7 @@
+{
+  "controller": "predictive_adaptive",
+  "seed": 1,
+  "status": "failed",
+  "started_at": "2026-09-05T18:53:18Z",
+  "error": "TypeError: 'NoneType' object is not subscriptable"
+}

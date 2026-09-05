@@ -11,12 +11,16 @@ class SafetyGate:
         min_green_seconds=10,
         yellow_seconds=3,
         all_red_seconds=1,
-        confidence_threshold=0.50
+        confidence_threshold=0.50,
+        risk_threshold=0.75,
+        accident_probability_threshold=0.75
     ):
         self.min_green_seconds = min_green_seconds
         self.yellow_seconds = yellow_seconds
         self.all_red_seconds = all_red_seconds
         self.confidence_threshold = confidence_threshold
+        self.risk_threshold = risk_threshold
+        self.accident_probability_threshold = accident_probability_threshold
 
     def validate(
         self,
@@ -27,7 +31,10 @@ class SafetyGate:
         pedestrian_clear,
         downstream_available,
         emergency_safe,
-        confidence
+        confidence,
+        safety_risk=0.0,
+        accident_detected=False,
+        safety_confidence=None
     ):
         """
         Validate a proposed signal phase.
@@ -50,8 +57,17 @@ class SafetyGate:
             "emergency_safe": bool(emergency_safe),
             "confidence_valid": (
                 confidence >= self.confidence_threshold
-            )
+            ),
+            "risk_valid": (
+                0.0 <= safety_risk <= self.risk_threshold
+            ),
+            "accident_safe": not bool(accident_detected),
         }
+
+        if safety_confidence is not None:
+            checks["safety_confidence_valid"] = (
+                safety_confidence >= self.confidence_threshold
+            )
 
         reasons = []
 

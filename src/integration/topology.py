@@ -31,6 +31,11 @@ class Movement:
         self.lanes = lanes
         self.allowed = bool(allowed)
 
+    @property
+    def movement_id(self):
+        """Backward-compatible alias for the canonical ``id`` field."""
+        return self.id
+
     def to_dict(self):
         return {
             "movement_id": self.id,

@@ -1,0 +1,20 @@
+{
+  "controller": "fixed_time",
+  "seed": 1,
+  "status": "success",
+  "started_at": "2026-09-05T18:53:15Z",
+  "average_waiting_time": null,
+  "total_waiting_time": 0,
+  "maximum_waiting_time": 0.0,
+  "average_queue_length": null,
+  "maximum_queue_length": 0,
+  "throughput": 0,
+  "average_travel_time": null,
+  "total_travel_time": 0,
+  "number_of_stops": 0,
+  "fuel_consumption_mg": 0.0,
+  "co2_emissions_mg": 0.0,
+  "total_distance_m": 0.0,
+  "completed_vehicles": 0,
+  "measurement_samples": 0
+}

@@ -31,9 +31,15 @@ This module:
 from __future__ import annotations
 
 import json
+import os
+import sys
 from typing import Any
 
 import pandas as pd
+
+_SRC_DIR = os.path.dirname(__file__)
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
 
 try:
     # When src/ is directly on PYTHONPATH
@@ -116,7 +122,11 @@ class SafetyIntelligence:
 
         if self._near_miss is None:
 
-            from near_miss.probability_pipeline import ProbabilityPipeline
+            try:
+                from near_miss.probability_pipeline import ProbabilityPipeline
+            except ModuleNotFoundError:
+                # Repository-root pytest imports this module as ``src``.
+                from src.near_miss.probability_pipeline import ProbabilityPipeline
 
             path = (
                 self.near_miss_artifact

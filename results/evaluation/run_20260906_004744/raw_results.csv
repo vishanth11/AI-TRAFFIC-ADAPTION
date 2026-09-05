@@ -1,0 +1,5 @@
+controller,seed,status,started_at,average_waiting_time,total_waiting_time,maximum_waiting_time,average_queue_length,maximum_queue_length,throughput,average_travel_time,total_travel_time,number_of_stops,fuel_consumption_mg,co2_emissions_mg,total_distance_m,completed_vehicles,measurement_samples
+fixed_time,1,success,2026-09-05T19:17:44Z,,0,26.0,6.95,16,0,,0,19,409.9228596292242,1264.4557527763218,3.1906998737613694,0,40
+density_based,1,success,2026-09-05T19:17:45Z,,0,1.0,0.019230769230769232,1,0,,0,1,629.4068874413504,1941.4853013911568,11.976514716345422,0,52
+predictive_adaptive,1,success,2026-09-05T19:17:46Z,,0,13.0,0.5692307692307692,4,0,,0,6,1015.2691609773793,3131.733571828557,16.200997347259214,0,65
+integrated_ai,1,success,2026-09-05T19:17:48Z,,0,3.0,0.07692307692307693,1,0,,0,2,646.6041605369993,1994.5338986118652,11.781149785971316,0,52

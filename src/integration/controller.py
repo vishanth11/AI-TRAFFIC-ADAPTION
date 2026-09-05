@@ -23,7 +23,10 @@ class TrafficController:
             pedestrian_clear=checks["pedestrian_clear"],
             downstream_available=checks["downstream_available"],
             emergency_safe=checks["emergency_safe"],
-            confidence=checks["confidence"]
+            confidence=checks["confidence"],
+            safety_risk=checks.get("safety_risk", 0.0),
+            accident_detected=checks.get("accident_detected", False),
+            safety_confidence=checks.get("safety_confidence")
         )
 
     def decide_and_validate(

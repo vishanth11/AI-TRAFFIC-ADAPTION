@@ -1,0 +1,20 @@
+{
+  "controller": "integrated_ai",
+  "seed": 3,
+  "status": "success",
+  "started_at": "2026-09-05T18:56:44Z",
+  "average_waiting_time": 3.6263736263736264,
+  "total_waiting_time": 330.0,
+  "maximum_waiting_time": 19.0,
+  "average_queue_length": 1.5384615384615385,
+  "maximum_queue_length": 10,
+  "throughput": 91,
+  "average_travel_time": 93.32967032967034,
+  "total_travel_time": 8493.0,
+  "number_of_stops": 78,
+  "fuel_consumption_mg": 7354.4310997996445,
+  "co2_emissions_mg": 22685.752064597353,
+  "total_distance_m": 111.05840846070747,
+  "completed_vehicles": 91,
+  "measurement_samples": 260
+}
