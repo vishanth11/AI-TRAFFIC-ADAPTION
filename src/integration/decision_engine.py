@@ -1,7 +1,12 @@
 class DecisionEngine:
     """
-    Selects the best valid signal phase based on traffic demand,
-    prediction, priority, risk, fairness, and confidence.
+    Selects the best valid signal phase based on:
+
+    - traffic demand
+    - predicted traffic
+    - priority
+    - fairness
+    - risk
 
     This module only makes a decision.
     It does NOT directly control traffic signals.
@@ -46,7 +51,7 @@ class DecisionEngine:
         """
         Calculate the score for one phase.
 
-        All inputs are expected to be normalized to [0, 1].
+        All inputs must be normalized to [0, 1].
 
         Higher score = better phase.
         """
@@ -75,6 +80,77 @@ class DecisionEngine:
         )
 
         return score
+
+    def calculate_phase_prediction(
+        self,
+        predictions,
+        sensor_ids
+    ):
+        """
+        Convert GNN predictions for multiple sensors
+        into one prediction score for a signal phase.
+
+        Parameters
+        ----------
+        predictions : array-like
+            GNN predictions for all sensors.
+
+        sensor_ids : list
+            Sensor IDs belonging to this phase.
+
+        Returns
+        -------
+        float
+            Normalized phase prediction score [0, 1].
+        """
+
+        if predictions is None:
+            raise ValueError(
+                "predictions cannot be None"
+            )
+
+        if not sensor_ids:
+            raise ValueError(
+                "sensor_ids cannot be empty"
+            )
+
+        predictions = list(predictions)
+
+        # Validate sensor IDs
+        for sensor_id in sensor_ids:
+
+            if not isinstance(sensor_id, int):
+                raise ValueError(
+                    "sensor IDs must be integers"
+                )
+
+            if sensor_id < 0 or sensor_id >= len(predictions):
+                raise ValueError(
+                    f"Invalid sensor ID: {sensor_id}"
+                )
+
+        # Extract predictions for this phase
+        phase_predictions = [
+            float(predictions[sensor_id])
+            for sensor_id in sensor_ids
+        ]
+
+        # GNN predictions represent predicted traffic demand.
+        #
+        # We clamp negative values to zero because traffic
+        # demand cannot be negative.
+        phase_predictions = [
+            max(0.0, value)
+            for value in phase_predictions
+        ]
+
+        # Use the average predicted demand for the phase.
+        phase_prediction = (
+            sum(phase_predictions)
+            / len(phase_predictions)
+        )
+
+        return phase_prediction
 
     def select_best_phase(self, phase_scores):
         """
@@ -107,11 +183,29 @@ if __name__ == "__main__":
 
     engine = DecisionEngine()
 
+    # Example GNN prediction
+    predictions = [
+        0.8,
+        0.4,
+        0.2,
+        0.6
+    ]
+
+    # Example phase prediction
+    phase_prediction = engine.calculate_phase_prediction(
+        predictions,
+        sensor_ids=[0, 1]
+    )
+
+    print("Phase prediction:")
+    print(phase_prediction)
+
     # Example phase scores
     phase_scores = {
+
         "Phase_1": engine.calculate_phase_score(
             demand=0.80,
-            prediction=0.70,
+            prediction=phase_prediction,
             priority=0.20,
             fairness=0.60,
             risk=0.10
@@ -138,6 +232,7 @@ if __name__ == "__main__":
         phase_scores
     )
 
+    print()
     print("Phase scores:")
     print(phase_scores)
 
