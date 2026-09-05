@@ -20,6 +20,18 @@ SPLIT_DIR = DATA_NM / "splits"
 MODEL_DIR = Path("models/near_miss")
 TARGET = "event_type"
 
+pytestmark = pytest.mark.skipif(
+    not all((SPLIT_DIR / f"{split}.parquet").exists()
+            for split in ("train", "validation", "test"))
+    or not all((Path("dataset") / filename).exists() for filename in (
+        "train-00000-of-00002.parquet",
+        "train-00001-of-00002.parquet",
+        "validation-00000-of-00001.parquet",
+        "test-00000-of-00001.parquet",
+    )),
+    reason="Phase 3 near-miss Parquet artifacts are not present in this checkout.",
+)
+
 
 @pytest.fixture(scope="module")
 def parts():

@@ -1,0 +1,11 @@
+{
+  "config": "simulation\\configs\\corridor_emergency.sumocfg",
+  "mode": "emergency_demo",
+  "seed": 1,
+  "steps": 120,
+  "warmup_steps": 10,
+  "control_interval": 10.0,
+  "prediction_interval": 10,
+  "runtime_log": "results\\final_runs\\run_20260906_012805\\runtime.jsonl",
+  "metrics": "results\\final_runs\\run_20260906_012805\\metrics.json"
+}

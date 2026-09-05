@@ -41,6 +41,11 @@ DATASET_FILES = {
     "test": sorted(DATASET_DIR.glob("test-*.parquet")),
 }
 
+pytestmark = pytest.mark.skipif(
+    not all(DATASET_FILES.values()),
+    reason="Phase 5 accident Parquet artifacts are not present in this checkout.",
+)
+
 
 @pytest.fixture(scope="module")
 def sample_record():

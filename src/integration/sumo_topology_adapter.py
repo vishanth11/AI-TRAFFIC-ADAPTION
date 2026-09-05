@@ -189,6 +189,41 @@ class SUMOTopologyAdapter:
 
         return topologies
 
+    def discover_signalized_junctions(self):
+        """Return junctions with a multi-movement signal program.
+
+        SUMO's traffic-light ID list also contains one-link fringe signal
+        controllers in this network (for example ``bottom0`` and ``top0``).
+        Phase 2 controls intersection signals only, so identify those
+        controllers from TraCI metadata rather than treating every ID as a
+        corridor junction.
+        """
+        junction_ids = self.traci.trafficlight.getIDList()
+        signalized_ids = []
+
+        for junction_id in junction_ids:
+            controlled_links = self.traci.trafficlight.getControlledLinks(
+                junction_id
+            )
+            link_count = sum(1 for links in controlled_links if links)
+            if link_count < 2:
+                continue
+
+            programs = self.traci.trafficlight.getAllProgramLogics(
+                junction_id
+            )
+            has_multiple_green_phases = any(
+                sum(
+                    1 for phase in program.phases
+                    if any(signal in ("G", "g") for signal in phase.state)
+                ) >= 2
+                for program in programs
+            )
+            if has_multiple_green_phases:
+                signalized_ids.append(junction_id)
+
+        return signalized_ids
+
     # ============================================================
     # LANE -> EDGE
     # ============================================================
