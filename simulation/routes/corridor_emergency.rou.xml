@@ -19,8 +19,7 @@
         No blue-light device is attached: SUMO must not bypass red lights.
         The AI controller proactively opens a safe green phase before the
         ambulance reaches the junction.
-        jmDriveAfterRedTime=0 and jmDriveAfterYellowTime=0 explicitly disable
-        junction model tolerance for crossing on red or yellow.
+        Red/yellow junction-model tolerance is explicitly disabled.
     -->
     <vType
         id="ambulance"
@@ -38,7 +37,7 @@
         color="1,1,0"
     />
 
-    <!-- Cross-corridor demand -->
+    <!-- Valid cross-corridor routes -->
     <route id="left_to_right" edges="left0A0 A0B0 B0C0 C0right0" />
     <route id="right_to_left" edges="right0C0 C0B0 B0A0 A0left0" />
     <route id="top0_to_top1" edges="top0A0 A0B0 B0top1" />
@@ -49,7 +48,7 @@
     <route id="bottom2_to_top0" edges="bottom2C0 C0B0 B0A0 A0top0" />
     <route id="top2_to_bottom2" edges="top2C0 C0bottom2" />
 
-    <!-- Turning/local demand to create conflicts at all junctions -->
+    <!-- Local/turning routes. Every route below uses a valid network connection. -->
     <route id="top0_to_left" edges="top0A0 A0left0" />
     <route id="top0_to_bottom" edges="top0A0 A0bottom0" />
     <route id="bottom0_to_left" edges="bottom0A0 A0left0" />
@@ -57,9 +56,9 @@
     <route id="top1_to_left" edges="top1B0 B0A0 A0left0" />
     <route id="bottom1_to_right" edges="bottom1B0 B0C0 C0right0" />
     <route id="top2_to_right" edges="top2C0 C0right0" />
-    <route id="bottom2_to_left" edges="bottom2C0 C0B0 A0left0" />
+    <route id="bottom2_to_left" edges="bottom2C0 C0B0 B0A0 A0left0" />
 
-    <!-- Exactly ONE ambulance; kept before all flows for sorted departure loading. -->
+    <!-- Exactly ONE ambulance. It uses the same valid corridor route as before. -->
     <vehicle
         id="ambulance_0"
         type="ambulance"
