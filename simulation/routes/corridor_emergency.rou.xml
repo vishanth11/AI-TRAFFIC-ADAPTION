@@ -31,10 +31,7 @@
         <param key="has.bluelight.device" value="true" />
     </vType>
 
-    <!--
-        PRIMARY CROSS-CORRIDOR DEMAND
-        Traffic enters from every outer approach of the 3-junction corridor.
-    -->
+    <!-- Cross-corridor demand -->
     <route id="left_to_right" edges="left0A0 A0B0 B0C0 C0right0" />
     <route id="right_to_left" edges="right0C0 C0B0 B0A0 A0left0" />
     <route id="top0_to_top1" edges="top0A0 A0B0 B0top1" />
@@ -43,8 +40,9 @@
     <route id="bottom1_to_bottom2" edges="bottom1B0 B0C0 C0bottom2" />
     <route id="top2_to_bottom0" edges="top2C0 C0B0 B0A0 A0bottom0" />
     <route id="bottom2_to_top0" edges="bottom2C0 C0B0 B0A0 A0top0" />
+    <route id="top2_to_bottom2" edges="top2C0 C0bottom2" />
 
-    <!-- TURNING / LOCAL DEMAND to create conflicts at each junction -->
+    <!-- Turning/local demand to create conflicts at all junctions -->
     <route id="top0_to_left" edges="top0A0 A0left0" />
     <route id="top0_to_bottom" edges="top0A0 A0bottom0" />
     <route id="bottom0_to_left" edges="bottom0A0 A0left0" />
@@ -54,10 +52,7 @@
     <route id="top2_to_right" edges="top2C0 C0right0" />
     <route id="bottom2_to_left" edges="bottom2C0 C0B0 B0A0 A0left0" />
 
-    <!--
-        ONE ambulance, loaded before the flows because SUMO route files
-        are incrementally loaded and departure/begin times must be sorted.
-    -->
+    <!-- Exactly ONE ambulance; kept before all flows for sorted departure loading. -->
     <vehicle
         id="ambulance_0"
         type="ambulance"
@@ -67,7 +62,7 @@
         departSpeed="13.9"
     />
 
-    <!-- 8 approaches x 300 veh/h = strong corridor demand -->
+    <!-- Main demand: 8 major routes x 300 veh/h -->
     <flow id="flow_left_to_right" type="car" route="left_to_right" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_right_to_left" type="car" route="right_to_left" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_top0_to_top1" type="car" route="top0_to_top1" begin="0" end="900" vehsPerHour="300" />
@@ -76,8 +71,9 @@
     <flow id="flow_bottom1_to_bottom2" type="car" route="bottom1_to_bottom2" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_top2_to_bottom0" type="car" route="top2_to_bottom0" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_bottom2_to_top0" type="car" route="bottom2_to_top0" begin="0" end="900" vehsPerHour="300" />
+    <flow id="flow_top2_to_bottom2" type="car" route="top2_to_bottom2" begin="0" end="900" vehsPerHour="300" />
 
-    <!-- Additional turning demand: 8 x 150 veh/h = 1200 veh/h -->
+    <!-- Additional turning demand -->
     <flow id="flow_top0_to_left" type="car" route="top0_to_left" begin="0" end="900" vehsPerHour="150" />
     <flow id="flow_top0_to_bottom" type="car" route="top0_to_bottom" begin="0" end="900" vehsPerHour="150" />
     <flow id="flow_bottom0_to_left" type="car" route="bottom0_to_left" begin="0" end="900" vehsPerHour="150" />
