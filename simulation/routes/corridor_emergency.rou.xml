@@ -14,11 +14,19 @@
         color="1,1,0"
     />
 
-    <!-- Emergency vehicle: yellow body; controller adds exactly two rear red markers -->
+    <!--
+        Emergency vehicle:
+        - vClass=emergency enables emergency behavior
+        - guiShape=emergency gives the SUMO emergency/rescue icon
+        - has.bluelight.device enables the blue flashing emergency light
+        - larger dimensions make it easier to distinguish
+        - yellow color is requested; note that SUMO's emergency shape has
+          its own white rescue-vehicle rendering in the GUI.
+    -->
     <vType
         id="ambulance"
         vClass="emergency"
-        guiShape="passenger"
+        guiShape="emergency"
         accel="3.0"
         decel="5.0"
         sigma="0.0"
@@ -27,7 +35,9 @@
         minGap="2.5"
         maxSpeed="13.9"
         color="1,1,0"
-    />
+    >
+        <param key="has.bluelight.device" value="true" />
+    </vType>
 
     <route id="eastbound" edges="left0A0 A0B0 B0C0 C0right0" />
     <route id="westbound" edges="right0C0 C0B0 B0A0 A0left0" />
