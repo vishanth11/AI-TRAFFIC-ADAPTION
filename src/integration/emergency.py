@@ -15,9 +15,11 @@ EMERGENCY_TYPE_NAMES = {
     "police",
 }
 
-# SUMO TraCI signal bit for the two rear brake-light dots.
-# We use it as a permanent visual marker for the emergency vehicle only.
-EMERGENCY_REAR_MARKER_SIGNAL = 8
+# SUMO TraCI vehicle-signal bits.
+# Bit 3 = rear brake-light dots; bit 11 = blue emergency light.
+EMERGENCY_REAR_MARKER_SIGNAL = 1 << 3
+EMERGENCY_BLUE_SIGNAL = 1 << 11
+EMERGENCY_VISUAL_SIGNALS = EMERGENCY_REAR_MARKER_SIGNAL | EMERGENCY_BLUE_SIGNAL
 
 
 @dataclass(frozen=True)
@@ -83,11 +85,11 @@ class EmergencyCorridorManager:
         )
 
     def _apply_visual_markers(self, vehicle_ids):
-        """Keep normal cars plain and mark only emergency vehicles with two red rear dots.
+        """Apply only the requested emergency visualization signals.
 
-        SUMO draws two red rear dots when VEH_SIGNAL_BRAKELIGHT is active.  We
-        explicitly set the signal every simulation step so this is a visual
-        emergency marker rather than automatic braking/blinker behavior.
+        Emergency vehicles get two rear red light dots and the blue emergency
+        light. Normal vehicles get signal state 0 so they remain visually plain.
+        No left/right blinkers are enabled here.
         """
         set_signals = getattr(self.traci.vehicle, "setSignals", None)
         if set_signals is None:
@@ -101,10 +103,8 @@ class EmergencyCorridorManager:
                 self.traci.vehicle.getVehicleClass, vehicle_id, default=""
             )
             is_emergency = self._is_emergency(vehicle_type, vehicle_class)
-            signal_state = (
-                EMERGENCY_REAR_MARKER_SIGNAL if is_emergency else 0
-            )
-            self._safe_call(set_signals, vehicle_id, signal_state)
+            signal_state = EMERGENCY_VISUAL_SIGNALS if is_emergency else 0
+            self._safe_call(set_signals, vehicle_id, signal_state, default=None)
 
     def _junction_for_movement(self, movement, topologies):
         for junction_id, topology in topologies.items():
@@ -117,8 +117,7 @@ class EmergencyCorridorManager:
         states = []
         current_ids = set(self.traci.vehicle.getIDList())
 
-        # Remove SUMO's normal automatic light indicators from every vehicle,
-        # then put exactly the two rear red dots on emergency vehicles.
+        # Apply the visual state every simulation step.
         self._apply_visual_markers(current_ids)
 
         for vehicle_id in current_ids:
@@ -226,9 +225,12 @@ class EmergencyCorridorManager:
         movement_id = None
         for candidate_id, movement in topology.movements.items():
             if movement.from_road == state.current_edge:
-                next_edge = state.route[
-                    state.route.index(state.current_edge) + 1
-                ] if state.current_edge in state.route and state.route.index(state.current_edge) + 1 < len(state.route) else None
+                next_edge = (
+                    state.route[state.route.index(state.current_edge) + 1]
+                    if state.current_edge in state.route
+                    and state.route.index(state.current_edge) + 1 < len(state.route)
+                    else None
+                )
                 if movement.to_road == next_edge:
                     movement_id = candidate_id
                     break
