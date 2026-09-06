@@ -14,7 +14,12 @@
         color="1,1,0"
     />
 
-    <!-- Large emergency vehicle with blue-light device -->
+    <!--
+        Emergency vehicle.
+        IMPORTANT: no blue-light device is attached.
+        This means SUMO will NOT grant special-rights red-light bypass.
+        The AI controller must first select a safe green phase.
+    -->
     <vType
         id="ambulance"
         vClass="emergency"
@@ -27,9 +32,7 @@
         minGap="2.5"
         maxSpeed="13.9"
         color="1,1,0"
-    >
-        <param key="has.bluelight.device" value="true" />
-    </vType>
+    />
 
     <!-- Cross-corridor demand -->
     <route id="left_to_right" edges="left0A0 A0B0 B0C0 C0right0" />
@@ -62,7 +65,7 @@
         departSpeed="13.9"
     />
 
-    <!-- Main demand: 8 major routes x 300 veh/h -->
+    <!-- Main demand -->
     <flow id="flow_left_to_right" type="car" route="left_to_right" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_right_to_left" type="car" route="right_to_left" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_top0_to_top1" type="car" route="top0_to_top1" begin="0" end="900" vehsPerHour="300" />
