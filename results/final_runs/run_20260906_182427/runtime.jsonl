@@ -1,0 +1,2 @@
+{"event": "system_start", "timestamp": "2026-09-06T12:54:27.869522+00:00", "mode": "emergency_demo", "visualization": "headless", "config": "simulation\\configs\\corridor_emergency.sumocfg", "steps": 200, "warmup_steps": 10, "control_interval": 10.0, "prediction_interval": 10, "seed": 1}
+{"event": "system_failure", "timestamp": "2026-09-06T12:54:28.577079+00:00", "error": "FatalTraCIError: Connection closed by SUMO."}

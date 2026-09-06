@@ -1,0 +1,25 @@
+{
+  "average_waiting_time": 25.278260869565216,
+  "total_waiting_time": 2907.0,
+  "maximum_waiting_time": 93.0,
+  "average_queue_length": 54.0271186440678,
+  "maximum_queue_length": 121,
+  "throughput": 115,
+  "average_travel_time": 102.18260869565218,
+  "total_travel_time": 11751.0,
+  "number_of_stops": 1309,
+  "fuel_consumption_mg": 22502.932546098455,
+  "co2_emissions_mg": 69414.6213426803,
+  "total_distance_m": 125.83525917193516,
+  "completed_vehicles": 115,
+  "measurement_samples": 295,
+  "decision_count": 77,
+  "safety_gate_rejections": 0,
+  "fallback_decisions": 3,
+  "emergency_priority_decisions": 3,
+  "emergency_priority_junctions": [
+    "A0",
+    "B0",
+    "C0"
+  ]
+}
