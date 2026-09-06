@@ -24,7 +24,7 @@
     <!--
         SIMULTANEOUS B0 EMERGENCY TEST
         Both ambulances depart at exactly 20 s and approach B0 from
-        conflicting directions. Normal traffic is intentionally heavy.
+        conflicting directions. Normal traffic is also placed around B0.
 
         ambulance_0: A0 -> B0 -> C0 -> NORTH
         ambulance_1: NORTH -> B0 -> SOUTH
@@ -34,6 +34,20 @@
 
     <route id="ambulance_1_b0_north_to_south" edges="top1B0 B0bottom1" />
     <vehicle id="ambulance_1" type="ambulance" route="ambulance_1_b0_north_to_south" depart="20" departLane="0" departSpeed="13.9" />
+
+    <!-- Normal vehicles deliberately surrounding B0 during the ambulance test. -->
+    <vehicle id="b0_car_01" type="car" route="left_to_right" depart="17" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_02" type="car" route="right_to_left" depart="18" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_03" type="car" route="top1_to_top2" depart="18" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_04" type="car" route="bottom1_to_bottom2" depart="18" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_05" type="car" route="left_to_right" depart="19" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_06" type="car" route="right_to_left" depart="19" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_07" type="car" route="top1_to_left" depart="20" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_08" type="car" route="bottom1_to_right" depart="20" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_09" type="car" route="top1_to_top2" depart="21" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_10" type="car" route="bottom1_to_bottom2" depart="21" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_11" type="car" route="left_to_right" depart="22" departLane="0" departSpeed="13.9" />
+    <vehicle id="b0_car_12" type="car" route="right_to_left" depart="22" departLane="0" departSpeed="13.9" />
 
     <!-- Later emergency events, separated from the simultaneous B0 test. -->
     <route id="ambulance_2_a0_east_to_north" edges="B0A0 A0top0" />
