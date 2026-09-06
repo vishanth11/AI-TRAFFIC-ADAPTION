@@ -15,6 +15,10 @@ EMERGENCY_TYPE_NAMES = {
     "police",
 }
 
+# SUMO TraCI signal bit for the two rear brake-light dots.
+# We use it as a permanent visual marker for the emergency vehicle only.
+EMERGENCY_REAR_MARKER_SIGNAL = 8
+
 
 @dataclass(frozen=True)
 class EmergencyVehicleState:
@@ -78,6 +82,30 @@ class EmergencyCorridorManager:
             for value in values
         )
 
+    def _apply_visual_markers(self, vehicle_ids):
+        """Keep normal cars plain and mark only emergency vehicles with two red rear dots.
+
+        SUMO draws two red rear dots when VEH_SIGNAL_BRAKELIGHT is active.  We
+        explicitly set the signal every simulation step so this is a visual
+        emergency marker rather than automatic braking/blinker behavior.
+        """
+        set_signals = getattr(self.traci.vehicle, "setSignals", None)
+        if set_signals is None:
+            return
+
+        for vehicle_id in vehicle_ids:
+            vehicle_type = self._safe_call(
+                self.traci.vehicle.getTypeID, vehicle_id, default=""
+            )
+            vehicle_class = self._safe_call(
+                self.traci.vehicle.getVehicleClass, vehicle_id, default=""
+            )
+            is_emergency = self._is_emergency(vehicle_type, vehicle_class)
+            signal_state = (
+                EMERGENCY_REAR_MARKER_SIGNAL if is_emergency else 0
+            )
+            self._safe_call(set_signals, vehicle_id, signal_state)
+
     def _junction_for_movement(self, movement, topologies):
         for junction_id, topology in topologies.items():
             if movement in topology.movements:
@@ -88,6 +116,11 @@ class EmergencyCorridorManager:
         """Discover current emergency vehicles from SUMO type/class data."""
         states = []
         current_ids = set(self.traci.vehicle.getIDList())
+
+        # Remove SUMO's normal automatic light indicators from every vehicle,
+        # then put exactly the two rear red dots on emergency vehicles.
+        self._apply_visual_markers(current_ids)
+
         for vehicle_id in current_ids:
             vehicle_type = self._safe_call(
                 self.traci.vehicle.getTypeID, vehicle_id, default=""
