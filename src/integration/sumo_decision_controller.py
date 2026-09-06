@@ -55,21 +55,13 @@ def _find_sumo_executable():
     if os.environ.get("ProgramFiles(x86)"):
         candidates.append(
             os.path.join(
-                os.environ["ProgramFiles(x86)"],
-                "Eclipse",
-                "Sumo",
-                "bin",
-                "sumo.exe",
+                os.environ["ProgramFiles(x86)"], "Eclipse", "Sumo", "bin", "sumo.exe"
             )
         )
     if os.environ.get("ProgramW6432"):
         candidates.append(
             os.path.join(
-                os.environ["ProgramW6432"],
-                "Eclipse",
-                "Sumo",
-                "bin",
-                "sumo.exe",
+                os.environ["ProgramW6432"], "Eclipse", "Sumo", "bin", "sumo.exe"
             )
         )
     for candidate in candidates:
@@ -90,6 +82,14 @@ PREDICTION_INTERVAL = 10
 MIN_GREEN_SECONDS = 10.0
 WARMUP_STEPS = 10
 TOTAL_STEPS = 200
+
+# Emergency preemption is intentionally proactive.  The ambulance must not
+# reach a red light and then wait for the controller to react.  Once the
+# predicted arrival is inside this window, the controller requests the safe
+# green phase for the ambulance's movement before the vehicle reaches the
+# junction.  The vehicle never receives SUMO's special red-light bypass.
+EMERGENCY_PREEMPT_ETA_SECONDS = 30.0
+EMERGENCY_PREEMPT_DISTANCE_METERS = 350.0
 
 
 def _clamp(value):
@@ -201,6 +201,8 @@ class Phase2SUMOController:
                 "phase_by_id": {p["phase_id"]: p for p in representations},
                 "last_control": -float("inf"),
                 "last_phase": None,
+                "emergency_hold_phase": None,
+                "emergency_vehicle_id": None,
             }
             print(
                 f"Topology: {junction_id} roads={len(topology.roads)} "
@@ -232,11 +234,8 @@ class Phase2SUMOController:
             f"transition_phase={transition}"
         )
 
-        # Do not restart an already active green. Otherwise request the
-        # preceding yellow/all-red phase so SUMO owns the safe transition.
         if current != target_phase:
             self.traci.trafficlight.setPhase(junction_id, transition)
-
             transition_duration = next(
                 (
                     phase["duration"]
@@ -261,6 +260,25 @@ class Phase2SUMOController:
             f"resulting_state={executed_state}"
         )
         return {"phase": executed, "state": executed_state, "requested": target_phase}
+
+    @staticmethod
+    def _emergency_requires_preemption(emergency_plan):
+        """Return True when the ambulance is close enough to pre-open its green."""
+        if emergency_plan is None or not emergency_plan.selected_phase:
+            return False
+        eta = emergency_plan.eta_seconds
+        distance = emergency_plan.distance_to_junction
+        eta_trigger = eta is not None and eta <= EMERGENCY_PREEMPT_ETA_SECONDS
+        distance_trigger = (
+            distance is not None
+            and distance <= EMERGENCY_PREEMPT_DISTANCE_METERS
+        )
+        return bool(eta_trigger or distance_trigger)
+
+    def _record_decision(self, record):
+        self.decisions.append(record)
+        if self.decision_observer is not None:
+            self.decision_observer(record)
 
     def run(self):
         command = list(self.sumo_cmd)
@@ -297,14 +315,15 @@ class Phase2SUMOController:
                 self._simulation_step()
 
             self._observe_steps = True
-
             predictions = np.zeros(NUM_SENSORS, dtype=np.float32)
             safety_assessment = None
             last_safety_assessment = -float("inf")
+
             for step in range(self.total_steps):
                 self._simulation_step()
                 now = self.traci.simulation.getTime()
                 history.add_state(sensor_builder.build_state())
+
                 if now - last_safety_assessment >= self.control_interval:
                     safety_assessment = safety_adapter.assess()
                     last_safety_assessment = now
@@ -313,8 +332,7 @@ class Phase2SUMOController:
                 emergency_plans = {}
                 if emergency_manager is not None:
                     topology_map = {
-                        key: value["topology"]
-                        for key, value in runtimes.items()
+                        key: value["topology"] for key, value in runtimes.items()
                     }
                     emergency_states = emergency_manager.discover(topology_map)
                     released_emergency_ids = emergency_manager.release_completed(
@@ -337,8 +355,99 @@ class Phase2SUMOController:
                     predictions = np.asarray(predictions, dtype=np.float32).reshape(NUM_SENSORS)
 
                 for junction_id, runtime in runtimes.items():
-                    if now - runtime["last_control"] < self.control_interval:
+                    emergency_plan = emergency_plans.get(junction_id)
+                    emergency_preempt = self._emergency_requires_preemption(emergency_plan)
+
+                    # Normal AI decisions remain rate-limited. Emergency
+                    # preemption is intentionally allowed to bypass that
+                    # scheduling interval because waiting for the next normal
+                    # control tick can make the ambulance reach a red light.
+                    if not emergency_preempt and now - runtime["last_control"] < self.control_interval:
                         continue
+
+                    # Once preemption starts, remember the requested green.
+                    # While the same emergency is still approaching this
+                    # junction, normal AI is not allowed to take the green away.
+                    if emergency_preempt:
+                        target_phase_id = emergency_plan.selected_phase
+                        target_phase = runtime["phase_by_id"].get(target_phase_id)
+                        if target_phase is None:
+                            print(
+                                f"[EMERGENCY_REJECT] time={now:.1f} "
+                                f"junction={junction_id} vehicle={emergency_plan.vehicle_id} "
+                                "reason=selected_phase_not_available"
+                            )
+                            continue
+
+                        target_index = target_phase["phase_index"]
+                        current_phase = phase_adapter.get_current_phase(junction_id)
+
+                        if current_phase != target_index:
+                            print(
+                                f"[EMERGENCY_PREEMPT] time={now:.1f} "
+                                f"junction={junction_id} "
+                                f"vehicle={emergency_plan.vehicle_id} "
+                                f"distance={emergency_plan.distance_to_junction} "
+                                f"ETA={emergency_plan.eta_seconds} "
+                                f"required_movement={emergency_plan.required_movement} "
+                                f"open_phase={target_phase_id} "
+                                "action=OPEN_EARLY"
+                            )
+                            executed = self._execute(
+                                junction_id,
+                                target_index,
+                                phase_adapter,
+                            )
+                            runtime["emergency_hold_phase"] = target_phase_id
+                            runtime["emergency_vehicle_id"] = emergency_plan.vehicle_id
+                            runtime["last_control"] = self.traci.simulation.getTime()
+                            runtime["last_phase"] = target_phase_id
+                            self._record_decision(
+                                {
+                                    "time": now,
+                                    "junction": junction_id,
+                                    "selected": target_phase_id,
+                                    "method": "emergency_preemption",
+                                    "safety": {
+                                        "approved": True,
+                                        "mode": "proactive_emergency_preemption",
+                                    },
+                                    "emergency_active": True,
+                                    "emergency_vehicle_id": emergency_plan.vehicle_id,
+                                    "emergency_eta": emergency_plan.eta_seconds,
+                                    "emergency_priority": emergency_plan.urgency,
+                                    "emergency_distance": emergency_plan.distance_to_junction,
+                                    "executed": executed,
+                                }
+                            )
+                        else:
+                            runtime["emergency_hold_phase"] = target_phase_id
+                            runtime["emergency_vehicle_id"] = emergency_plan.vehicle_id
+                            print(
+                                f"[EMERGENCY_HOLD] time={now:.1f} "
+                                f"junction={junction_id} "
+                                f"vehicle={emergency_plan.vehicle_id} "
+                                f"distance={emergency_plan.distance_to_junction} "
+                                f"ETA={emergency_plan.eta_seconds} "
+                                f"phase={target_phase_id} "
+                                "action=KEEP_GREEN"
+                            )
+                            runtime["last_control"] = now
+                            runtime["last_phase"] = target_phase_id
+                        continue
+
+                    # The emergency is no longer close enough to this junction.
+                    # Release only this junction's hold; another downstream
+                    # junction can independently enter preemption later.
+                    if runtime["emergency_hold_phase"] is not None:
+                        print(
+                            f"[EMERGENCY_JUNCTION_RELEASE] time={now:.1f} "
+                            f"junction={junction_id} "
+                            f"vehicle={runtime['emergency_vehicle_id']} "
+                            "action=RESUME_NORMAL_AI"
+                        )
+                        runtime["emergency_hold_phase"] = None
+                        runtime["emergency_vehicle_id"] = None
 
                     topology = runtime["topology"]
                     movement_demand = demand_calculator.calculate_movement_demand(
@@ -347,7 +456,9 @@ class Phase2SUMOController:
                     phase_demand = demand_calculator.calculate_phase_demand(
                         runtime["phase_objects"], movement_demand
                     )
-                    normalized_demand = demand_calculator.normalize_phase_demand(phase_demand)
+                    normalized_demand = demand_calculator.normalize_phase_demand(
+                        phase_demand
+                    )
 
                     prediction_values = {}
                     for phase in runtime["phases"]:
@@ -365,29 +476,16 @@ class Phase2SUMOController:
                     }
 
                     phase_scores = {}
-                    emergency_plan = emergency_plans.get(junction_id)
                     for phase in runtime["phases"]:
                         phase_id = phase["phase_id"]
-                        emergency_priority = (
-                            emergency_plan.urgency
-                            if emergency_plan is not None
-                            and phase_id == emergency_plan.selected_phase
-                            else 0.0
-                        )
                         phase_scores[phase_id] = decision_engine.calculate_phase_score(
                             demand=_clamp(normalized_demand.get(phase_id, 0.0)),
                             prediction=_clamp(
                                 prediction_values[phase_id] / max_prediction
                                 if max_prediction > 0 else 0.0
                             ),
-                            # Phase 2 baseline: no priority/fairness model yet.
-                            priority=(
-                                emergency_priority
-                                if emergency_plan is not None else 0.5
-                            ),
+                            priority=0.5,
                             fairness=0.5,
-                            # DecisionEngine's risk input is a safety factor:
-                            # high observed risk lowers the phase score.
                             risk=_clamp(1.0 - phase_risks[phase_id]),
                         )
 
@@ -406,7 +504,6 @@ class Phase2SUMOController:
                             "topology_valid": bool(topology.roads and topology.movements),
                             "conflict_free": compatible,
                             "timing_valid": timing_valid,
-                            # Phase-2 assumptions: these inputs are not sensed yet.
                             "pedestrian_clear": True,
                             "downstream_available": True,
                             "emergency_safe": True,
@@ -417,11 +514,6 @@ class Phase2SUMOController:
                             ),
                             "safety_confidence": safety_assessment["safety_confidence"],
                         }
-
-                    if emergency_plan is not None and emergency_plan.selected_phase:
-                        phase_scores[emergency_plan.selected_phase] = max(
-                            phase_scores.values()
-                        ) + (0.01 * emergency_plan.urgency)
 
                     phase_ids = list(phase_scores)
                     current_index = next(
@@ -450,28 +542,12 @@ class Phase2SUMOController:
                         f"accident_status={safety_assessment['accident_status']} "
                         f"accident_confidence={safety_assessment['accident_confidence']} "
                         f"safety_confidence={safety_assessment['safety_confidence']} "
-                        f"emergency_active={emergency_plan is not None} "
+                        "emergency_active=False "
                         f"scores={phase_scores} selected={selected} "
                         f"safety={'APPROVED' if result['execute'] else 'REJECTED'} "
                         f"reasons={result['safety'].get('reasons', [])} method={result['method']}"
                     )
-                    if emergency_plan is not None:
-                        print(
-                            f"[EMERGENCY] time={now:.1f} "
-                            f"vehicle={emergency_plan.vehicle_id} "
-                            f"junction={junction_id} "
-                            f"current_edge={emergency_plan.current_edge} "
-                            f"next_edge={emergency_plan.next_edge} "
-                            f"required_movement={emergency_plan.required_movement} "
-                            f"distance={emergency_plan.distance_to_junction} "
-                            f"speed={emergency_plan.vehicle_speed_mps} "
-                            f"ETA={emergency_plan.eta_seconds} "
-                            f"urgency={emergency_plan.urgency:.3f} "
-                            f"candidate_phases={emergency_plan.candidate_phases} "
-                            f"selected_phase={selected} "
-                            f"safe={emergency_plan.safe} "
-                            f"fallback={result['method']}"
-                        )
+
                     if result["execute"] and selected is not None:
                         executed = self._execute(
                             junction_id,
@@ -480,30 +556,20 @@ class Phase2SUMOController:
                         )
                         runtime["last_control"] = self.traci.simulation.getTime()
                         runtime["last_phase"] = selected
-                        decision_record = {
-                            "time": now,
-                            "junction": junction_id,
-                            "selected": selected,
-                            "method": result["method"],
-                            "safety": result["safety"],
-                            "emergency_active": emergency_plan is not None,
-                            "emergency_vehicle_id": (
-                                emergency_plan.vehicle_id
-                                if emergency_plan is not None else None
-                            ),
-                            "emergency_eta": (
-                                emergency_plan.eta_seconds
-                                if emergency_plan is not None else None
-                            ),
-                            "emergency_priority": (
-                                emergency_plan.urgency
-                                if emergency_plan is not None else None
-                            ),
-                            "executed": executed,
-                        }
-                        self.decisions.append(decision_record)
-                        if self.decision_observer is not None:
-                            self.decision_observer(decision_record)
+                        self._record_decision(
+                            {
+                                "time": now,
+                                "junction": junction_id,
+                                "selected": selected,
+                                "method": result["method"],
+                                "safety": result["safety"],
+                                "emergency_active": False,
+                                "emergency_vehicle_id": None,
+                                "emergency_eta": None,
+                                "emergency_priority": None,
+                                "executed": executed,
+                            }
+                        )
         finally:
             self.traci.close()
             print("SUMO closed safely")
