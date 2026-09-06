@@ -1,8 +1,8 @@
 <routes>
-    <!-- Normal traffic: yellow vehicles -->
+    <!-- Normal traffic -->
     <vType id="car" vClass="passenger" guiShape="passenger" accel="2.6" decel="4.5" sigma="0.5" length="5" width="1.8" minGap="2.5" maxSpeed="13.9" color="1,1,0" />
 
-    <!-- Emergency vehicle: no blue-light device; AI controls safe preemption. -->
+    <!-- Emergency vehicle. No blue-light device: AI controls safe preemption. -->
     <vType id="ambulance" vClass="emergency" guiShape="emergency" accel="3.0" decel="5.0" sigma="0.0" length="10" width="3" minGap="2.5" maxSpeed="13.9" jmDriveAfterRedTime="0" jmDriveAfterYellowTime="0" color="1,1,0" />
 
     <!-- Normal cross-corridor routes -->
@@ -27,34 +27,97 @@
     <route id="bottom2_to_left" edges="bottom2C0 C0B0 B0A0 A0left0" />
 
     <!--
-        Four staggered emergency scenarios.
+        FOUR STAGGERED EMERGENCY EVENTS.
 
-        ambulance_0: EAST of A0 -> A0 -> B0 -> C0 -> NORTH.
-        ambulance_1: NORTH -> A0 -> SOUTH.
-        ambulance_2: EAST -> A0 -> NORTH. This conflicts with ambulance_1
-                     at A0, so the AI must not open both movements together.
-        ambulance_3: NORTH of C0 -> C0 -> B0 -> A0 -> SOUTH.
+        Main demonstration:
 
-        Departures are separated: 0, 80, 150 and 230 seconds.
+        ambulance_0:
+            West -> A0 -> B0 -> C0 -> North.
+            It reaches B0 from the west and needs to continue east.
+
+        ambulance_1:
+            North -> B0 -> South.
+            It is intentionally scheduled so ambulance_0 and ambulance_1
+            arrive at the SAME INTERSECTION (B0) during the same emergency
+            window. Their movements conflict at B0. The AI must choose a
+            safe order and must never give both conflicting movements green.
+
+        ambulance_2:
+            East -> A0 -> North.
+            A later, separate emergency at A0. It does not overlap with the
+            first B0 conflict demonstration.
+
+        ambulance_3:
+            North of C0 -> C0 -> B0 -> A0 -> South.
+            A later reverse-corridor emergency.
+
+        The emergency events are deliberately separated so there are never
+        two independent emergency events active at the same time, except
+        ambulance_0 + ambulance_1 which intentionally meet at B0.
     -->
 
-    <!-- 1. EAST -> A0 -> C0 -> NORTH -->
-    <route id="ambulance_0_east_a0_c0_north" edges="B0A0 A0B0 B0C0 C0top2" />
-    <vehicle id="ambulance_0" type="ambulance" route="ambulance_0_east_a0_c0_north" depart="0" departLane="0" departSpeed="13.9" />
+    <!-- ================================================================ -->
+    <!-- EVENT 1: TWO AMBULANCES MEET AT B0                         -->
+    <!-- ================================================================ -->
 
-    <!-- 2. NORTH -> A0 -> SOUTH -->
-    <route id="ambulance_1_a0_north_to_south" edges="top0A0 A0bottom0" />
-    <vehicle id="ambulance_1" type="ambulance" route="ambulance_1_a0_north_to_south" depart="80" departLane="0" departSpeed="13.9" />
+    <!-- Ambulance 0: WEST -> A0 -> B0 -> C0 -> NORTH -->
+    <route id="ambulance_0_a0_b0_c0_north" edges="left0A0 A0B0 B0C0 C0top2" />
+    <vehicle
+        id="ambulance_0"
+        type="ambulance"
+        route="ambulance_0_a0_b0_c0_north"
+        depart="0"
+        departLane="0"
+        departSpeed="13.9"
+    />
 
-    <!-- 3. EAST -> A0 -> NORTH; conflicts with ambulance_1 at A0 -->
+    <!--
+        Ambulance 1: NORTH -> B0 -> SOUTH.
+        This conflicts with ambulance_0 at B0.
+        Start early enough for both vehicles to reach B0 together.
+    -->
+    <route id="ambulance_1_b0_north_to_south" edges="top1B0 B0bottom1" />
+    <vehicle
+        id="ambulance_1"
+        type="ambulance"
+        route="ambulance_1_b0_north_to_south"
+        depart="10"
+        departLane="0"
+        departSpeed="13.9"
+    />
+
+    <!-- ================================================================ -->
+    <!-- EVENT 2: SEPARATE CONFLICT AT A0                             -->
+    <!-- ================================================================ -->
+
+    <!-- Ambulance 2: EAST -> A0 -> NORTH -->
     <route id="ambulance_2_a0_east_to_north" edges="B0A0 A0top0" />
-    <vehicle id="ambulance_2" type="ambulance" route="ambulance_2_a0_east_to_north" depart="150" departLane="0" departSpeed="13.9" />
+    <vehicle
+        id="ambulance_2"
+        type="ambulance"
+        route="ambulance_2_a0_east_to_north"
+        depart="110"
+        departLane="0"
+        departSpeed="13.9"
+    />
 
-    <!-- 4. NORTH of C0 -> C0 -> B0 -> A0 -> SOUTH -->
+    <!-- ================================================================ -->
+    <!-- EVENT 3: REVERSE CORRIDOR                                   -->
+    <!-- ================================================================ -->
+
+    <!-- Ambulance 3: NORTH C0 -> B0 -> A0 -> SOUTH -->
     <route id="ambulance_3_c0_north_to_a0_south" edges="top2C0 C0B0 B0A0 A0bottom0" />
-    <vehicle id="ambulance_3" type="ambulance" route="ambulance_3_c0_north_to_a0_south" depart="230" departLane="0" departSpeed="13.9" />
+    <vehicle
+        id="ambulance_3"
+        type="ambulance"
+        route="ambulance_3_c0_north_to_a0_south"
+        depart="190"
+        departLane="0"
+        departSpeed="13.9"
+    />
 
-    <!-- Main demand -->
+    <!-- Main traffic: deliberately kept active so the AI must handle -->
+    <!-- emergency priority while normal traffic is present. -->
     <flow id="flow_left_to_right" type="car" route="left_to_right" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_right_to_left" type="car" route="right_to_left" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_top0_to_top1" type="car" route="top0_to_top1" begin="0" end="900" vehsPerHour="300" />
@@ -65,7 +128,7 @@
     <flow id="flow_bottom2_to_top0" type="car" route="bottom2_to_top0" begin="0" end="900" vehsPerHour="300" />
     <flow id="flow_top2_to_bottom2" type="car" route="top2_to_bottom2" begin="0" end="900" vehsPerHour="300" />
 
-    <!-- Additional turning demand -->
+    <!-- Additional turning traffic -->
     <flow id="flow_top0_to_left" type="car" route="top0_to_left" begin="0" end="900" vehsPerHour="150" />
     <flow id="flow_top0_to_bottom" type="car" route="top0_to_bottom" begin="0" end="900" vehsPerHour="150" />
     <flow id="flow_bottom0_to_left" type="car" route="bottom0_to_left" begin="0" end="900" vehsPerHour="150" />
