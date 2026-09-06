@@ -14,14 +14,7 @@
         color="1,1,0"
     />
 
-    <!--
-        Emergency vehicle:
-        - Starts early so it is clearly visible in the GUI demo.
-        - vClass=emergency preserves emergency behavior.
-        - guiShape=emergency gives the SUMO emergency vehicle icon.
-        - has.bluelight.device enables the blue emergency light.
-        - Larger dimensions make it easy to distinguish from normal cars.
-    -->
+    <!-- Emergency vehicle: large SUMO emergency icon + blue-light device -->
     <vType
         id="ambulance"
         vClass="emergency"
@@ -41,6 +34,16 @@
     <route id="eastbound" edges="left0A0 A0B0 B0C0 C0right0" />
     <route id="westbound" edges="right0C0 C0B0 B0A0 A0left0" />
 
+    <!-- Exactly ONE ambulance. Put it before the long flows so SUMO loads it. -->
+    <vehicle
+        id="ambulance_0"
+        type="ambulance"
+        route="eastbound"
+        depart="0"
+        departLane="0"
+        departSpeed="13.9"
+    />
+
     <!-- Normal background traffic -->
     <flow
         id="eastbound_flow"
@@ -57,15 +60,5 @@
         begin="0"
         end="900"
         vehsPerHour="900"
-    />
-
-    <!-- Exactly ONE clearly visible emergency vehicle -->
-    <vehicle
-        id="ambulance_0"
-        type="ambulance"
-        route="eastbound"
-        depart="5"
-        departLane="0"
-        departSpeed="13.9"
     />
 </routes>
