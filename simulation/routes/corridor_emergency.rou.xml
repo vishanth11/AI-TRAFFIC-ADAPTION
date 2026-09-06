@@ -16,9 +16,11 @@
 
     <!--
         Emergency vehicle.
-        IMPORTANT: no blue-light device is attached.
-        This means SUMO will NOT grant special-rights red-light bypass.
-        The AI controller must first select a safe green phase.
+        No blue-light device is attached: SUMO must not bypass red lights.
+        The AI controller proactively opens a safe green phase before the
+        ambulance reaches the junction.
+        jmDriveAfterRedTime=0 and jmDriveAfterYellowTime=0 explicitly disable
+        junction model tolerance for crossing on red or yellow.
     -->
     <vType
         id="ambulance"
@@ -31,6 +33,8 @@
         width="3"
         minGap="2.5"
         maxSpeed="13.9"
+        jmDriveAfterRedTime="0"
+        jmDriveAfterYellowTime="0"
         color="1,1,0"
     />
 
@@ -53,7 +57,7 @@
     <route id="top1_to_left" edges="top1B0 B0A0 A0left0" />
     <route id="bottom1_to_right" edges="bottom1B0 B0C0 C0right0" />
     <route id="top2_to_right" edges="top2C0 C0right0" />
-    <route id="bottom2_to_left" edges="bottom2C0 C0B0 B0A0 A0left0" />
+    <route id="bottom2_to_left" edges="bottom2C0 C0B0 A0left0" />
 
     <!-- Exactly ONE ambulance; kept before all flows for sorted departure loading. -->
     <vehicle
