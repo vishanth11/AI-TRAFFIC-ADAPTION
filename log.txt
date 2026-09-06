@@ -1,0 +1,15 @@
+Loading net-file from 'simulation\configs\../networks/corridor.net.xml' ... done (7ms).
+Loading route-files incrementally from 'simulation\configs\../routes/corridor_emergency.rou.xml'
+Loading done.
+Simulation version 1.27.1 started with time: 0.00.
+Warning: Route file should be sorted by departure time, ignoring 'ambulance_0'!
+Simulation ended at time: 900.00.
+Reason: The final simulation step has been reached.
+Performance:
+ Duration: 0.40s
+ Real time factor: 2238.81
+ UPS: 291057.213930
+Vehicles:
+ Inserted: 461 (Loaded: 574)
+ Running: 160
+ Waiting: 113

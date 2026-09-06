@@ -1,5 +1,9 @@
 <routes>
 
+    <!-- ========================================================= -->
+    <!-- VEHICLE TYPES                                             -->
+    <!-- ========================================================= -->
+
     <vType
         id="car"
         accel="2.6"
@@ -10,32 +14,511 @@
         maxSpeed="13.9"
     />
 
-    <route
-        id="eastbound"
-        edges="left0A0 A0B0 B0C0 C0right0"
-    />
 
-    <route
-        id="westbound"
-        edges="right0C0 C0B0 B0A0 A0left0"
+    <!-- ========================================================= -->
+    <!-- A0 ROUTES                                                 -->
+    <!-- ========================================================= -->
+
+    <!-- North -> South -->
+    <route id="A0_N_S"
+           edges="top0A0 A0bottom0" />
+
+    <!-- North -> East -->
+    <route id="A0_N_E"
+           edges="top0A0 A0B0" />
+
+    <!-- North -> West -->
+    <route id="A0_N_W"
+           edges="top0A0 A0left0" />
+
+
+    <!-- South -> North -->
+    <route id="A0_S_N"
+           edges="bottom0A0 A0top0" />
+
+    <!-- South -> East -->
+    <route id="A0_S_E"
+           edges="bottom0A0 A0B0" />
+
+    <!-- South -> West -->
+    <route id="A0_S_W"
+           edges="bottom0A0 A0left0" />
+
+
+    <!-- East -> West -->
+    <route id="A0_E_W"
+           edges="B0A0 A0left0" />
+
+    <!-- East -> North -->
+    <route id="A0_E_N"
+           edges="B0A0 A0top0" />
+
+    <!-- East -> South -->
+    <route id="A0_E_S"
+           edges="B0A0 A0bottom0" />
+
+
+    <!-- West -> East -->
+    <route id="A0_W_E"
+           edges="left0A0 A0B0" />
+
+    <!-- West -> North -->
+    <route id="A0_W_N"
+           edges="left0A0 A0top0" />
+
+    <!-- West -> South -->
+    <route id="A0_W_S"
+           edges="left0A0 A0bottom0" />
+
+
+    <!-- ========================================================= -->
+    <!-- B0 ROUTES                                                 -->
+    <!-- ========================================================= -->
+
+    <!-- North -> South -->
+    <route id="B0_N_S"
+           edges="top1B0 B0bottom1" />
+
+    <!-- North -> East -->
+    <route id="B0_N_E"
+           edges="top1B0 B0C0" />
+
+    <!-- North -> West -->
+    <route id="B0_N_W"
+           edges="top1B0 B0A0" />
+
+
+    <!-- South -> North -->
+    <route id="B0_S_N"
+           edges="bottom1B0 B0top1" />
+
+    <!-- South -> East -->
+    <route id="B0_S_E"
+           edges="bottom1B0 B0C0" />
+
+    <!-- South -> West -->
+    <route id="B0_S_W"
+           edges="bottom1B0 B0A0" />
+
+
+    <!-- East -> West -->
+    <route id="B0_E_W"
+           edges="C0B0 B0A0" />
+
+    <!-- East -> North -->
+    <route id="B0_E_N"
+           edges="C0B0 B0top1" />
+
+    <!-- East -> South -->
+    <route id="B0_E_S"
+           edges="C0B0 B0bottom1" />
+
+
+    <!-- West -> East -->
+    <route id="B0_W_E"
+           edges="A0B0 B0C0" />
+
+    <!-- West -> North -->
+    <route id="B0_W_N"
+           edges="A0B0 B0top1" />
+
+    <!-- West -> South -->
+    <route id="B0_W_S"
+           edges="A0B0 B0bottom1" />
+
+
+    <!-- ========================================================= -->
+    <!-- C0 ROUTES                                                 -->
+    <!-- ========================================================= -->
+
+    <!-- North -> South -->
+    <route id="C0_N_S"
+           edges="top2C0 C0bottom2" />
+
+    <!-- North -> East -->
+    <route id="C0_N_E"
+           edges="top2C0 C0right0" />
+
+    <!-- North -> West -->
+    <route id="C0_N_W"
+           edges="top2C0 C0B0" />
+
+
+    <!-- South -> North -->
+    <route id="C0_S_N"
+           edges="bottom2C0 C0top2" />
+
+    <!-- South -> East -->
+    <route id="C0_S_E"
+           edges="bottom2C0 C0right0" />
+
+    <!-- South -> West -->
+    <route id="C0_S_W"
+           edges="bottom2C0 C0B0" />
+
+
+    <!-- East -> West -->
+    <route id="C0_E_W"
+           edges="right0C0 C0B0" />
+
+    <!-- East -> North -->
+    <route id="C0_E_N"
+           edges="right0C0 C0top2" />
+
+    <!-- East -> South -->
+    <route id="C0_E_S"
+           edges="right0C0 C0bottom2" />
+
+
+    <!-- West -> East -->
+    <route id="C0_W_E"
+           edges="B0C0 C0right0" />
+
+    <!-- West -> North -->
+    <route id="C0_W_N"
+           edges="B0C0 C0top2" />
+
+    <!-- West -> South -->
+    <route id="C0_W_S"
+           edges="B0C0 C0bottom2" />
+
+
+    <!-- ========================================================= -->
+    <!-- A0 TRAFFIC FLOWS                                          -->
+    <!-- ========================================================= -->
+
+    <flow
+        id="A0_N_S_flow"
+        type="car"
+        route="A0_N_S"
+        begin="0"
+        end="900"
+        vehsPerHour="350"
     />
 
     <flow
-        id="eastbound_flow"
+        id="A0_N_E_flow"
         type="car"
-        route="eastbound"
+        route="A0_N_E"
         begin="0"
         end="900"
-        vehsPerHour="900"
+        vehsPerHour="150"
     />
 
     <flow
-        id="westbound_flow"
+        id="A0_N_W_flow"
         type="car"
-        route="westbound"
+        route="A0_N_W"
         begin="0"
         end="900"
-        vehsPerHour="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="A0_S_N_flow"
+        type="car"
+        route="A0_S_N"
+        begin="0"
+        end="900"
+        vehsPerHour="350"
+    />
+
+    <flow
+        id="A0_S_E_flow"
+        type="car"
+        route="A0_S_E"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="A0_S_W_flow"
+        type="car"
+        route="A0_S_W"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="A0_E_W_flow"
+        type="car"
+        route="A0_E_W"
+        begin="0"
+        end="900"
+        vehsPerHour="300"
+    />
+
+    <flow
+        id="A0_E_N_flow"
+        type="car"
+        route="A0_E_N"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="A0_E_S_flow"
+        type="car"
+        route="A0_E_S"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="A0_W_E_flow"
+        type="car"
+        route="A0_W_E"
+        begin="0"
+        end="900"
+        vehsPerHour="300"
+    />
+
+    <flow
+        id="A0_W_N_flow"
+        type="car"
+        route="A0_W_N"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="A0_W_S_flow"
+        type="car"
+        route="A0_W_S"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+
+    <!-- ========================================================= -->
+    <!-- B0 TRAFFIC FLOWS                                          -->
+    <!-- ========================================================= -->
+
+    <flow
+        id="B0_N_S_flow"
+        type="car"
+        route="B0_N_S"
+        begin="0"
+        end="900"
+        vehsPerHour="350"
+    />
+
+    <flow
+        id="B0_N_E_flow"
+        type="car"
+        route="B0_N_E"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="B0_N_W_flow"
+        type="car"
+        route="B0_N_W"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="B0_S_N_flow"
+        type="car"
+        route="B0_S_N"
+        begin="0"
+        end="900"
+        vehsPerHour="350"
+    />
+
+    <flow
+        id="B0_S_E_flow"
+        type="car"
+        route="B0_S_E"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="B0_S_W_flow"
+        type="car"
+        route="B0_S_W"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="B0_E_W_flow"
+        type="car"
+        route="B0_E_W"
+        begin="0"
+        end="900"
+        vehsPerHour="300"
+    />
+
+    <flow
+        id="B0_E_N_flow"
+        type="car"
+        route="B0_E_N"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="B0_E_S_flow"
+        type="car"
+        route="B0_E_S"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="B0_W_E_flow"
+        type="car"
+        route="B0_W_E"
+        begin="0"
+        end="900"
+        vehsPerHour="300"
+    />
+
+    <flow
+        id="B0_W_N_flow"
+        type="car"
+        route="B0_W_N"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="B0_W_S_flow"
+        type="car"
+        route="B0_W_S"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+
+    <!-- ========================================================= -->
+    <!-- C0 TRAFFIC FLOWS                                          -->
+    <!-- ========================================================= -->
+
+    <flow
+        id="C0_N_S_flow"
+        type="car"
+        route="C0_N_S"
+        begin="0"
+        end="900"
+        vehsPerHour="350"
+    />
+
+    <flow
+        id="C0_N_E_flow"
+        type="car"
+        route="C0_N_E"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="C0_N_W_flow"
+        type="car"
+        route="C0_N_W"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="C0_S_N_flow"
+        type="car"
+        route="C0_S_N"
+        begin="0"
+        end="900"
+        vehsPerHour="350"
+    />
+
+    <flow
+        id="C0_S_E_flow"
+        type="car"
+        route="C0_S_E"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="C0_S_W_flow"
+        type="car"
+        route="C0_S_W"
+        begin="0"
+        end="900"
+        vehsPerHour="150"
+    />
+
+    <flow
+        id="C0_E_W_flow"
+        type="car"
+        route="C0_E_W"
+        begin="0"
+        end="900"
+        vehsPerHour="300"
+    />
+
+    <flow
+        id="C0_E_N_flow"
+        type="car"
+        route="C0_E_N"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="C0_E_S_flow"
+        type="car"
+        route="C0_E_S"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="C0_W_E_flow"
+        type="car"
+        route="C0_W_E"
+        begin="0"
+        end="900"
+        vehsPerHour="300"
+    />
+
+    <flow
+        id="C0_W_N_flow"
+        type="car"
+        route="C0_W_N"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
+    />
+
+    <flow
+        id="C0_W_S_flow"
+        type="car"
+        route="C0_W_S"
+        begin="0"
+        end="900"
+        vehsPerHour="120"
     />
 
 </routes>
