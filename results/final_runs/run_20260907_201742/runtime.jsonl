@@ -1,0 +1,1 @@
+{"event": "system_start", "timestamp": "2026-09-07T14:47:42.014012+00:00", "mode": "normal", "visualization": "headless", "config": "simulation\\configs\\large_grid_multimodal.sumocfg", "steps": 200, "warmup_steps": 10, "control_interval": 10.0, "prediction_interval": 10, "seed": 1}

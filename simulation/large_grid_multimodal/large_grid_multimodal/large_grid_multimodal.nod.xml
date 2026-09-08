@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Multimodal 4x4 urban grid: same road layout as the validated
+     large_grid scenario (16 signalized junctions J01..J16, row-major,
+     boundary ext_* nodes), extended with a north-south double-track
+     rail line running through the grid between the western and
+     central columns (x=150 southbound track, x=170 northbound track).
+
+     The rail line crosses all four horizontal roads (y=900, 600, 300,
+     0). Each intersection is an explicit node of type "rail_crossing":
+     SUMO builds an automatic level crossing there (trains always have
+     priority, barriers close for road traffic on approach). The crossed
+     road edges are therefore split into three parts each in the edge
+     file (_p1/_p2/_p3) so the crossing nodes lie between real edges.
+
+     Rail chain nodes:
+       rw_* = southbound track (x=150), north terminus rw_n0 (150,1000)
+              to south terminus rw_s0 (150,-100)
+       re_* = northbound track (x=170), south terminus re_s0 (170,-100)
+              to north terminus re_n0 (170,1000)
+     Stations sit at y=-60 (Station A, south), y=450 (Station B,
+     center) and y=960 (Station C, north), one platform per direction.
+     Only J01..J16 carry road traffic lights; rail crossings are
+     automatic barrier junctions, not signalized road junctions. -->
+<nodes>
+    <!-- Major signalized junctions -->
+    <node id="J01" x="0"    y="900" type="traffic_light"/>
+    <node id="J02" x="300"  y="900" type="traffic_light"/>
+    <node id="J03" x="600"  y="900" type="traffic_light"/>
+    <node id="J04" x="900"  y="900" type="traffic_light"/>
+    <node id="J05" x="0"    y="600" type="traffic_light"/>
+    <node id="J06" x="300"  y="600" type="traffic_light"/>
+    <node id="J07" x="600"  y="600" type="traffic_light"/>
+    <node id="J08" x="900"  y="600" type="traffic_light"/>
+    <node id="J09" x="0"    y="300" type="traffic_light"/>
+    <node id="J10" x="300"  y="300" type="traffic_light"/>
+    <node id="J11" x="600"  y="300" type="traffic_light"/>
+    <node id="J12" x="900"  y="300" type="traffic_light"/>
+    <node id="J13" x="0"    y="0"   type="traffic_light"/>
+    <node id="J14" x="300"  y="0"   type="traffic_light"/>
+    <node id="J15" x="600"  y="0"   type="traffic_light"/>
+    <node id="J16" x="900"  y="0"   type="traffic_light"/>
+
+    <!-- Boundary entry/exit nodes (no traffic lights) -->
+    <node id="ext_J01_w" x="-150" y="900"  type="priority"/>
+    <node id="ext_J01_n" x="0"    y="1050" type="priority"/>
+    <node id="ext_J02_n" x="300"  y="1050" type="priority"/>
+    <node id="ext_J03_n" x="600"  y="1050" type="priority"/>
+    <node id="ext_J04_n" x="900"  y="1050" type="priority"/>
+    <node id="ext_J04_e" x="1050" y="900"  type="priority"/>
+    <node id="ext_J05_w" x="-150" y="600"  type="priority"/>
+    <node id="ext_J08_e" x="1050" y="600"  type="priority"/>
+    <node id="ext_J09_w" x="-150" y="300"  type="priority"/>
+    <node id="ext_J12_e" x="1050" y="300"  type="priority"/>
+    <node id="ext_J13_w" x="-150" y="0"    type="priority"/>
+    <node id="ext_J13_s" x="0"    y="-150" type="priority"/>
+    <node id="ext_J14_s" x="300"  y="-150" type="priority"/>
+    <node id="ext_J15_s" x="600"  y="-150" type="priority"/>
+    <node id="ext_J16_s" x="900"  y="-150" type="priority"/>
+    <node id="ext_J16_e" x="1050" y="0"    type="priority"/>
+
+    <!-- Southbound rail track (x=150), north to south -->
+    <node id="rw_n0"    x="150" y="1000" type="priority"/>
+    <node id="rw_stC"   x="150" y="960"  type="priority"/>
+    <node id="rw_rc900" x="150" y="900"  type="rail_crossing"/>
+    <node id="rw_rc600" x="150" y="600"  type="rail_crossing"/>
+    <node id="rw_stB"   x="150" y="450"  type="priority"/>
+    <node id="rw_rc300" x="150" y="300"  type="rail_crossing"/>
+    <node id="rw_rc0"   x="150" y="0"    type="rail_crossing"/>
+    <node id="rw_stA"   x="150" y="-60"  type="priority"/>
+    <node id="rw_s0"    x="150" y="-100" type="priority"/>
+
+    <!-- Northbound rail track (x=170), south to north -->
+    <node id="re_s0"    x="170" y="-100" type="priority"/>
+    <node id="re_stA"   x="170" y="-60"  type="priority"/>
+    <node id="re_rc0"   x="170" y="0"    type="rail_crossing"/>
+    <node id="re_rc300" x="170" y="300"  type="rail_crossing"/>
+    <node id="re_stB"   x="170" y="450"  type="priority"/>
+    <node id="re_rc600" x="170" y="600"  type="rail_crossing"/>
+    <node id="re_rc900" x="170" y="900"  type="rail_crossing"/>
+    <node id="re_stC"   x="170" y="960"  type="priority"/>
+    <node id="re_n0"    x="170" y="1000" type="priority"/>
+</nodes>

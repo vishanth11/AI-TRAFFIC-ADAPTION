@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='utf-8'?>
+<routes>
+    <route id="amb_1_w_to_e_center" edges="in_w_J05 J05_J06_p1 J05_J06_p2 J05_J06_p3 J06_J07 J07_J08 out_e_J08" />
+    <route id="amb_2_s_to_n_center" edges="in_s_J14 J14_J10 J10_J06 J06_J02 out_n_J02" />
+    <route id="amb_3_sw_to_ne_center" edges="in_w_J09 J09_J10_p1 J09_J10_p2 J09_J10_p3 J10_J11 J11_J07 J07_J03 J03_J02 out_n_J02" />
+    <route id="amb_4_e_to_w_center" edges="in_e_J16 J16_J12 J12_J08 J08_J07 J07_J06 J06_J05_p1 J06_J05_p2 J06_J05_p3 out_w_J05" />
+    <route id="amb_5_long_snake" edges="in_n_J01 J01_J05 J05_J06_p1 J05_J06_p2 J05_J06_p3 J06_J10 J10_J14 J14_J15 J15_J16 out_e_J16" />
+    <route id="amb_6_s_to_e_ring" edges="in_s_J13 J13_J09 J09_J10_p1 J09_J10_p2 J09_J10_p3 J10_J11 J11_J12 J12_J16 out_s_J16" />
+    <vType id="ambulance" vClass="emergency" guiShape="emergency" accel="3.0" decel="5.0" sigma="0.0" length="10" width="3" minGap="2.5" maxSpeed="13.9" jmDriveAfterRedTime="0" jmDriveAfterYellowTime="0" color="1,1,0" />
+    <vType id="bicycle" vClass="bicycle" guiShape="bicycle" accel="1.2" decel="2.5" sigma="0.5" length="1.8" width="0.8" minGap="1.0" maxSpeed="5.6" color="0,1,0" />
+    <vType id="bus" vClass="bus" guiShape="bus" accel="1.5" decel="3.0" sigma="0.5" length="12" width="2.6" minGap="3.0" maxSpeed="11.1" color="0,0,1" />
+    <route id="bus_l1_w_e" edges="in_w_J05 J05_J06_p1 J05_J06_p2 J05_J06_p3 J06_J07 J07_J08 out_e_J08">
+        <stop busStop="bs_l1_J05J06" duration="20" />
+        <stop busStop="bs_l1_J06J07" duration="20" />
+        <stop busStop="bs_l1_J07J08" duration="20" />
+    </route>
+    <route id="bus_l2_n_s" edges="in_n_J02 J02_J06 J06_J10 J10_J14 out_s_J14">
+        <stop busStop="bs_l2_J02J06" duration="20" />
+        <stop busStop="bs_l2_J06J10" duration="20" />
+        <stop busStop="bs_l2_J10J14" duration="20" />
+    </route>
+    <route id="bus_l3_s_n" edges="in_s_J15 J15_J11 J11_J07 J07_J03 out_n_J03">
+        <stop busStop="bs_l3_J15J11" duration="20" />
+        <stop busStop="bs_l3_J11J07" duration="20" />
+        <stop busStop="bs_l3_J07J03" duration="20" />
+    </route>
+    <route id="bus_l4_w_e" edges="in_w_J09 J09_J10_p1 J09_J10_p2 J09_J10_p3 J10_J11 J11_J12 out_e_J12">
+        <stop busStop="bs_l4_J09J10" duration="20" />
+        <stop busStop="bs_l4_J10J11" duration="20" />
+        <stop busStop="bs_l4_J11J12" duration="20" />
+    </route>
+    <vType id="car" vClass="passenger" guiShape="passenger" accel="2.6" decel="4.5" sigma="0.5" length="5" width="1.8" minGap="2.5" maxSpeed="13.9" color="1,1,0" />
+    <route id="e_to_s_lefts" edges="in_e_J08 J08_J07 J07_J06 J06_J10 J10_J11 J11_J12 out_e_J12" />
+    <route id="e_to_s_right" edges="in_e_J12 J12_J16 J16_J15 J15_J14 out_s_J14" />
+    <route id="e_to_w_row1" edges="in_e_J04 J04_J03 J03_J02 J02_J01_p1 J02_J01_p2 J02_J01_p3 out_w_J01" />
+    <route id="e_to_w_row2" edges="in_e_J08 J08_J07 J07_J06 J06_J05_p1 J06_J05_p2 J06_J05_p3 out_w_J05" />
+    <route id="e_to_w_row3" edges="in_e_J12 J12_J11 J11_J10 J10_J09_p1 J10_J09_p2 J10_J09_p3 out_w_J09" />
+    <route id="e_to_w_row3_partial" edges="in_e_J12 J12_J11 J11_J10 J10_J09_p1 J10_J09_p2 J10_J09_p3 out_w_J09" />
+    <route id="e_to_w_row4" edges="in_e_J16 J16_J15 J15_J14 J14_J13_p1 J14_J13_p2 J14_J13_p3 out_w_J13" />
+    <route id="e_w_via_center" edges="in_e_J16 J16_J12 J12_J08 J08_J07 J07_J06 J06_J05_p1 J06_J05_p2 J06_J05_p3 out_w_J05" />
+    <route id="n_first_right" edges="in_n_J01 J01_J02_p1 J01_J02_p2 J01_J02_p3 J02_J03 J03_J04 out_e_J04" />
+    <route id="n_to_s_col1" edges="in_n_J01 J01_J05 J05_J09 J09_J13 out_s_J13" />
+    <route id="n_to_s_col2" edges="in_n_J02 J02_J06 J06_J10 J10_J14 out_s_J14" />
+    <route id="n_to_s_col3" edges="in_n_J03 J03_J07 J07_J11 J11_J15 out_s_J15" />
+    <route id="n_to_s_col4" edges="in_n_J04 J04_J08 J08_J12 J12_J16 out_s_J16" />
+    <route id="n_to_s_col4_partial" edges="in_n_J04 J04_J08 J08_J12 J12_J16 out_s_J16" />
+    <route id="n_to_w_lefts" edges="in_n_J04 J04_J03 J03_J02 J02_J06 J06_J05_p1 J06_J05_p2 J06_J05_p3 out_w_J05" />
+    <route id="nw_se_diagonal" edges="in_w_J01 J01_J02_p1 J01_J02_p2 J01_J02_p3 J02_J06 J06_J07 J07_J11 J11_J15 J15_J16 out_e_J16" />
+    <vType id="pedestrian" vClass="pedestrian" guiShape="pedestrian" width="0.5" length="0.5" maxSpeed="1.4" color="1,0,1" />
+    <route id="s_n_via_center" edges="in_s_J13 J13_J09 J09_J10_p1 J09_J10_p2 J09_J10_p3 J10_J11 J11_J07 J07_J03 J03_J04 out_e_J04" />
+    <route id="s_to_n_col1" edges="in_s_J13 J13_J09 J09_J05 J05_J01 out_n_J01" />
+    <route id="s_to_n_col2" edges="in_s_J14 J14_J10 J10_J06 J06_J02 out_n_J02" />
+    <route id="s_to_n_col3" edges="in_s_J15 J15_J11 J11_J07 J07_J03 out_n_J03" />
+    <route id="s_to_n_col4" edges="in_s_J16 J16_J12 J12_J08 J08_J04 out_n_J04" />
+    <route id="sw_ne_diagonal" edges="in_s_J14 J14_J10 J10_J11 J11_J07 J07_J03 J03_J02 out_n_J02" />
+    <vType id="train" vClass="rail" guiShape="rail" accel="0.8" decel="1.0" sigma="0.0" length="40" width="3" minGap="5.0" maxSpeed="20.0" color="0.5,0,0.5" />
+    <route id="train_northbound" edges="re_s0_stA re_stA_rc0 re_rc0_rc300 re_rc300_stB re_stB_rc600 re_rc600_rc900 re_rc900_stC re_stC_n0">
+        <stop trainStop="ts_stA_north" duration="40" />
+        <stop trainStop="ts_stB_north" duration="40" />
+        <stop trainStop="ts_stC_north" duration="40" />
+    </route>
+    <route id="train_southbound" edges="rw_n0_stC rw_stC_rc900 rw_rc900_rc600 rw_rc600_stB rw_stB_rc300 rw_rc300_rc0 rw_rc0_stA rw_stA_s0">
+        <stop trainStop="ts_stC_south" duration="40" />
+        <stop trainStop="ts_stB_south" duration="40" />
+        <stop trainStop="ts_stA_south" duration="40" />
+    </route>
+    <route id="w_to_e_row1" edges="in_w_J01 J01_J02_p1 J01_J02_p2 J01_J02_p3 J02_J03 J03_J04 out_e_J04" />
+    <route id="w_to_e_row2" edges="in_w_J05 J05_J06_p1 J05_J06_p2 J05_J06_p3 J06_J07 J07_J08 out_e_J08" />
+    <route id="w_to_e_row2_partial" edges="in_w_J05 J05_J06_p1 J05_J06_p2 J05_J06_p3 J06_J07 J07_J08 out_e_J08" />
+    <route id="w_to_e_row3" edges="in_w_J09 J09_J10_p1 J09_J10_p2 J09_J10_p3 J10_J11 J11_J12 out_e_J12" />
+    <route id="w_to_e_row4" edges="in_w_J13 J13_J14_p1 J13_J14_p2 J13_J14_p3 J14_J15 J15_J16 out_e_J16" />
+    <route id="w_to_n_lefts" edges="in_w_J13 J13_J14_p1 J13_J14_p2 J13_J14_p3 J14_J10 J10_J06 J06_J05_p1 J06_J05_p2 J06_J05_p3 out_w_J05" />
+    <flow id="bike_e_to_w_row3" type="bicycle" route="e_to_w_row3" begin="0" end="3600" vehsPerHour="20" departLane="free" />
+    <flow id="bike_n_to_s_col2" type="bicycle" route="n_to_s_col2" begin="0" end="3600" vehsPerHour="15" departLane="free" />
+    <flow id="bike_nw_se_diag" type="bicycle" route="nw_se_diagonal" begin="0" end="3600" vehsPerHour="20" departLane="free" />
+    <flow id="bike_s_to_n_col3" type="bicycle" route="s_to_n_col3" begin="0" end="3600" vehsPerHour="34" departLane="free" />
+    <flow id="bike_sw_ne_diag" type="bicycle" route="sw_ne_diagonal" begin="0" end="3600" vehsPerHour="30" departLane="free" />
+    <flow id="bike_w_to_e_row2" type="bicycle" route="w_to_e_row2" begin="0" end="3600" vehsPerHour="20" departLane="free" />
+    <flow id="flow_e_to_s_lefts" type="car" route="e_to_s_lefts" begin="0" end="3600" vehsPerHour="30" departLane="free" />
+    <flow id="flow_e_to_s_right" type="car" route="e_to_s_right" begin="0" end="3600" vehsPerHour="51" departLane="free" />
+    <flow id="flow_e_to_w_row2" type="car" route="e_to_w_row2" begin="0" end="3600" vehsPerHour="50" departLane="free" />
+    <flow id="flow_e_to_w_row3_partial" type="car" route="e_to_w_row3_partial" begin="0" end="3600" vehsPerHour="61" departLane="free" />
+    <flow id="flow_e_to_w_row4" type="car" route="e_to_w_row4" begin="0" end="3600" vehsPerHour="102" departLane="free" />
+    <flow id="flow_e_w_via_center" type="car" route="e_w_via_center" begin="0" end="3600" vehsPerHour="50" departLane="free" />
+    <flow id="flow_n_first_right" type="car" route="n_first_right" begin="0" end="3600" vehsPerHour="61" departLane="free" />
+    <flow id="flow_n_to_s_col1" type="car" route="n_to_s_col1" begin="0" end="3600" vehsPerHour="128" departLane="free" />
+    <flow id="flow_n_to_s_col3" type="car" route="n_to_s_col3" begin="0" end="3600" vehsPerHour="92" departLane="free" />
+    <flow id="flow_n_to_s_col4_partial" type="car" route="n_to_s_col4_partial" begin="0" end="3600" vehsPerHour="51" departLane="free" />
+    <flow id="flow_n_to_w_lefts" type="car" route="n_to_w_lefts" begin="0" end="3600" vehsPerHour="30" departLane="free" />
+    <flow id="flow_nw_se_diagonal" type="car" route="nw_se_diagonal" begin="0" end="3600" vehsPerHour="61" departLane="free" />
+    <flow id="flow_s_n_via_center" type="car" route="s_n_via_center" begin="0" end="3600" vehsPerHour="76" departLane="free" />
+    <flow id="flow_s_to_n_col2" type="car" route="s_to_n_col2" begin="0" end="3600" vehsPerHour="128" departLane="free" />
+    <flow id="flow_s_to_n_col4" type="car" route="s_to_n_col4" begin="0" end="3600" vehsPerHour="92" departLane="free" />
+    <flow id="flow_sw_ne_diagonal" type="car" route="sw_ne_diagonal" begin="0" end="3600" vehsPerHour="61" departLane="free" />
+    <flow id="flow_w_to_e_row1" type="car" route="w_to_e_row1" begin="0" end="3600" vehsPerHour="153" departLane="free" />
+    <flow id="flow_w_to_e_row2_partial" type="car" route="w_to_e_row2_partial" begin="0" end="3600" vehsPerHour="50" departLane="free" />
+    <flow id="flow_w_to_e_row3" type="car" route="w_to_e_row3" begin="0" end="3600" vehsPerHour="60" departLane="free" />
+    <flow id="flow_w_to_n_lefts" type="car" route="w_to_n_lefts" begin="0" end="3600" vehsPerHour="30" departLane="free" />
+    <personFlow id="p_local_around_stops" begin="0" end="3600" period="120">
+        <personTrip from="J05_J06_p1" to="J10_J11" />
+    </personFlow>
+    <personFlow id="p_walk_diag_center" begin="0" end="3600" period="90">
+        <personTrip from="in_w_J05" to="out_e_J08" />
+    </personFlow>
+    <personFlow id="p_walk_n_s_col2" begin="0" end="3600" period="120">
+        <personTrip from="in_n_J02" to="out_s_J14" />
+    </personFlow>
+    <personFlow id="p_walk_w_e_row3" begin="0" end="3600" period="120">
+        <personTrip from="in_w_J09" to="out_e_J12" />
+    </personFlow>
+    <vehicle id="ambulance_1" type="ambulance" route="amb_1_w_to_e_center" depart="120" departLane="free" departSpeed="max" />
+    <personFlow id="p_bus_l1_w_e" begin="200" end="3400" period="90">
+        <personTrip from="in_w_J05" to="out_e_J08" modes="public" />
+    </personFlow>
+    <vehicle id="train_south_1" type="train" route="train_southbound" depart="200" departLane="free" />
+    <personFlow id="p_train_south" begin="250" end="3400" period="90">
+        <personTrip from="in_n_J01" to="out_s_J13" modes="public" />
+    </personFlow>
+    <vehicle id="ambulance_2" type="ambulance" route="amb_2_s_to_n_center" depart="300" departLane="free" departSpeed="max" />
+    <vehicle id="bus_l1_1" type="bus" route="bus_l1_w_e" depart="300" departLane="free" />
+    <personFlow id="p_bus_l2_n_s" begin="300" end="3400" period="90">
+        <personTrip from="in_n_J02" to="out_s_J14" modes="public" />
+    </personFlow>
+    <vehicle id="bus_l2_1" type="bus" route="bus_l2_n_s" depart="400" departLane="free" />
+    <personFlow id="p_bus_l3_s_n" begin="400" end="3400" period="120">
+        <personTrip from="in_s_J15" to="out_n_J03" modes="public" />
+    </personFlow>
+    <vehicle id="bus_l3_1" type="bus" route="bus_l3_s_n" depart="500" departLane="free" />
+    <personFlow id="p_bus_l4_w_e" begin="500" end="3400" period="120">
+        <personTrip from="in_w_J09" to="out_e_J12" modes="public" />
+    </personFlow>
+    <vehicle id="train_north_1" type="train" route="train_northbound" depart="500" departLane="free" />
+    <personFlow id="p_train_north" begin="550" end="3400" period="120">
+        <personTrip from="in_s_J13" to="out_n_J01" modes="public" />
+    </personFlow>
+    <vehicle id="ambulance_3" type="ambulance" route="amb_3_sw_to_ne_center" depart="600" departLane="free" departSpeed="max" />
+    <vehicle id="bus_l4_1" type="bus" route="bus_l4_w_e" depart="600" departLane="free" />
+    <personFlow id="p_bus_then_train" begin="600" end="3000" period="120">
+        <personTrip from="in_w_J05" to="out_s_J13" modes="public" />
+    </personFlow>
+    <flow id="peak_e_w_via_center" type="car" route="e_w_via_center" begin="600" end="2000" vehsPerHour="50" departLane="free" />
+    <flow id="peak_s_n_via_center" type="car" route="s_n_via_center" begin="600" end="2000" vehsPerHour="50" departLane="free" />
+    <personFlow id="p_train_then_bus" begin="700" end="3000" period="90">
+        <personTrip from="in_s_J13" to="out_e_J08" modes="public" />
+    </personFlow>
+    <vehicle id="train_south_2" type="train" route="train_southbound" depart="800" departLane="free" />
+    <vehicle id="ambulance_4" type="ambulance" route="amb_4_e_to_w_center" depart="900" departLane="free" departSpeed="max" />
+    <vehicle id="bus_l1_2" type="bus" route="bus_l1_w_e" depart="900" departLane="free" />
+    <vehicle id="bus_l2_2" type="bus" route="bus_l2_n_s" depart="1000" departLane="free" />
+    <vehicle id="bus_l3_2" type="bus" route="bus_l3_s_n" depart="1100" departLane="free" />
+    <vehicle id="train_north_2" type="train" route="train_northbound" depart="1100" departLane="free" />
+    <vehicle id="ambulance_5" type="ambulance" route="amb_5_long_snake" depart="1200" departLane="free" departSpeed="max" />
+    <vehicle id="bus_l4_2" type="bus" route="bus_l4_w_e" depart="1200" departLane="free" />
+    <vehicle id="train_south_3" type="train" route="train_southbound" depart="1400" departLane="free" />
+    <vehicle id="ambulance_6" type="ambulance" route="amb_6_s_to_e_ring" depart="1500" departLane="free" departSpeed="max" />
+    <vehicle id="bus_l1_3" type="bus" route="bus_l1_w_e" depart="1500" departLane="free" />
+    <vehicle id="bus_l2_3" type="bus" route="bus_l2_n_s" depart="1600" departLane="free" />
+    <vehicle id="bus_l3_3" type="bus" route="bus_l3_s_n" depart="1700" departLane="free" />
+    <vehicle id="train_north_3" type="train" route="train_northbound" depart="1700" departLane="free" />
+    <vehicle id="bus_l4_3" type="bus" route="bus_l4_w_e" depart="1800" departLane="free" />
+    <vehicle id="train_south_4" type="train" route="train_southbound" depart="2000" departLane="free" />
+    <vehicle id="bus_l1_4" type="bus" route="bus_l1_w_e" depart="2100" departLane="free" />
+    <vehicle id="bus_l2_4" type="bus" route="bus_l2_n_s" depart="2200" departLane="free" />
+    <vehicle id="bus_l3_4" type="bus" route="bus_l3_s_n" depart="2300" departLane="free" />
+    <vehicle id="train_north_4" type="train" route="train_northbound" depart="2300" departLane="free" />
+    <vehicle id="bus_l4_4" type="bus" route="bus_l4_w_e" depart="2400" departLane="free" />
+    <vehicle id="train_south_5" type="train" route="train_southbound" depart="2600" departLane="free" />
+    <vehicle id="bus_l1_5" type="bus" route="bus_l1_w_e" depart="2700" departLane="free" />
+    <vehicle id="bus_l2_5" type="bus" route="bus_l2_n_s" depart="2800" departLane="free" />
+    <vehicle id="bus_l3_5" type="bus" route="bus_l3_s_n" depart="2900" departLane="free" />
+    <vehicle id="train_north_5" type="train" route="train_northbound" depart="2900" departLane="free" />
+    <vehicle id="bus_l4_5" type="bus" route="bus_l4_w_e" depart="3000" departLane="free" />
+    <vehicle id="train_south_6" type="train" route="train_southbound" depart="3200" departLane="free" />
+    <vehicle id="bus_l1_6" type="bus" route="bus_l1_w_e" depart="3300" departLane="free" />
+    <vehicle id="bus_l2_6" type="bus" route="bus_l2_n_s" depart="3400" departLane="free" />
+    <vehicle id="bus_l3_6" type="bus" route="bus_l3_s_n" depart="3500" departLane="free" />
+    <vehicle id="train_north_6" type="train" route="train_northbound" depart="3500" departLane="free" />
+    <vehicle id="bus_l4_6" type="bus" route="bus_l4_w_e" depart="3600" departLane="free" />
+</routes>

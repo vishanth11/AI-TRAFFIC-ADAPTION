@@ -1,0 +1,7 @@
+{
+  "controller": "predictive_adaptive",
+  "seed": 1,
+  "status": "failed",
+  "started_at": "2026-09-08T01:49:33Z",
+  "error": "KeyError: 81"
+}

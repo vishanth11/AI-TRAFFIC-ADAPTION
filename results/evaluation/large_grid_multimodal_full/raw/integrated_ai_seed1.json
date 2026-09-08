@@ -1,0 +1,7 @@
+{
+  "controller": "integrated_ai",
+  "seed": 1,
+  "status": "failed",
+  "started_at": "2026-09-08T03:50:15Z",
+  "error": "TraCIException: Connection 'default' is already active."
+}

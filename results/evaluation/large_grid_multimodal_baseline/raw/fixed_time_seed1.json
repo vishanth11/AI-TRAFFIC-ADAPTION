@@ -1,0 +1,20 @@
+{
+  "controller": "fixed_time",
+  "seed": 1,
+  "status": "success",
+  "started_at": "2026-09-07T16:13:36Z",
+  "average_waiting_time": 22.77777777777778,
+  "total_waiting_time": 410.0,
+  "maximum_waiting_time": 63.0,
+  "average_queue_length": 14.345,
+  "maximum_queue_length": 40,
+  "throughput": 18,
+  "average_travel_time": 159.5,
+  "total_travel_time": 2871.0,
+  "number_of_stops": 140,
+  "fuel_consumption_mg": 5974.590817846037,
+  "co2_emissions_mg": 18432.137292670093,
+  "total_distance_m": 78.1241404277822,
+  "completed_vehicles": 18,
+  "measurement_samples": 200
+}

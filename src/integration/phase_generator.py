@@ -6,8 +6,12 @@ class PhaseGenerator:
     simultaneously because none of them conflict.
     """
 
-    def __init__(self, conflict_graph):
+    def __init__(self, conflict_graph, max_phases=64):
+        if not isinstance(max_phases, int) or isinstance(max_phases, bool) or max_phases < 1:
+            raise ValueError("max_phases must be a positive integer")
+
         self.graph = conflict_graph
+        self.max_phases = max_phases
 
     def is_compatible(self, movements):
         """
@@ -68,34 +72,32 @@ class PhaseGenerator:
         return phases
 
     def generate_maximal_phases(self):
-        """
-        Return only phases that cannot accept another
-        compatible movement.
-
-        These are maximal compatible movement groups.
-        """
-
-        all_phases = self.generate_phases()
-
+        """Return bounded, greedily constructed maximal phases."""
+        allowed_movements = sorted(
+            (movement.id for movement in self.graph.topology.get_allowed_movements()),
+            key=str,
+        )
         maximal_phases = []
+        seen_phases = set()
 
-        for phase in all_phases:
-            phase_set = set(phase)
+        for seed in allowed_movements:
+            phase = [seed]
 
-            is_maximal = True
+            for candidate in allowed_movements:
+                if candidate == seed:
+                    continue
 
-            for other_phase in all_phases:
-                other_set = set(other_phase)
+                if self.is_compatible(phase + [candidate]):
+                    phase.append(candidate)
 
-                if (
-                    phase_set < other_set
-                    and phase_set.issubset(other_set)
-                ):
-                    is_maximal = False
-                    break
+            canonical_phase = tuple(sorted(phase, key=str))
+            if canonical_phase in seen_phases:
+                continue
 
-            if is_maximal:
-                maximal_phases.append(phase)
+            seen_phases.add(canonical_phase)
+            maximal_phases.append(canonical_phase)
+            if len(maximal_phases) >= self.max_phases:
+                break
 
         return maximal_phases
 

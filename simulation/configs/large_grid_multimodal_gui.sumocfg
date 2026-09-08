@@ -1,0 +1,31 @@
+<!-- Demonstration configuration for SUMO-GUI only.
+
+     Identical simulation to large_grid_multimodal.sumocfg (same network,
+     routes, stops and duration), but throttled for human observation.
+     Adjust the delay here or with the GUI's "Delay" slider:
+       - delay 150  = ~6.7 sim-seconds per wall second
+       - delay 250  =  4 sim-seconds per wall second
+       - delay 1000 =  real time
+
+     Headless runs must keep using large_grid_multimodal.sumocfg: the "delay"
+     option is GUI-only and the sumo binary rejects it.
+-->
+<configuration>
+
+    <input>
+        <net-file value="../networks/large_grid_multimodal.net.xml"/>
+        <route-files value="../routes/large_grid_multimodal.rou.xml"/>
+        <additional-files value="../additional/large_grid_multimodal_stops.add.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+    </time>
+
+    <gui_only>
+        <start value="true"/>
+        <delay value="150"/>
+    </gui_only>
+
+</configuration>

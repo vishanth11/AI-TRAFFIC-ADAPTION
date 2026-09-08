@@ -38,9 +38,11 @@ from integration.traffic_history import TrafficHistory
 from integration.sumo_prediction_controller import SUMOTrafficStateBuilder
 
 
-SUMO_CONFIG = os.path.join(PROJECT_ROOT, "simulation", "configs", "corridor.sumocfg")
+SUMO_CONFIG = os.path.join(
+    PROJECT_ROOT, "simulation", "configs", "large_grid_multimodal.sumocfg"
+)
 EMERGENCY_SUMO_CONFIG = os.path.join(
-    PROJECT_ROOT, "simulation", "configs", "corridor_emergency.sumocfg"
+    PROJECT_ROOT, "simulation", "configs", "large_grid_multimodal.sumocfg"
 )
 
 
