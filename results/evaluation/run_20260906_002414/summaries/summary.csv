@@ -1,0 +1,5 @@
+controller,successful_runs,average_waiting_time_mean,average_waiting_time_std,total_waiting_time_mean,total_waiting_time_std,maximum_waiting_time_mean,maximum_waiting_time_std,average_queue_length_mean,average_queue_length_std,maximum_queue_length_mean,maximum_queue_length_std,throughput_mean,throughput_std,average_travel_time_mean,average_travel_time_std,total_travel_time_mean,total_travel_time_std,number_of_stops_mean,number_of_stops_std,fuel_consumption_mg_mean,fuel_consumption_mg_std,co2_emissions_mg_mean,co2_emissions_mg_std
+fixed_time,1,,,0,0.0,0.0,0.0,,,0,0.0,0,0.0,,,0,0.0,0,0.0,0.0,0.0,0.0,0.0
+density_based,1,4.8,0.0,24.0,0.0,16.0,0.0,3.466666666666667,0.0,9,0.0,5,0.0,66.6,0.0,333.0,0.0,53,0.0,1636.7361544554321,0.0,5048.741744394983,0.0
+predictive_adaptive,1,5.0,0.0,65.0,0.0,17.0,0.0,4.1692307692307695,0.0,11,0.0,13,0.0,88.92307692307692,0.0,1156.0,0.0,69,0.0,1627.609224653137,0.0,5020.573654068769,0.0
+integrated_ai,1,3.2637362637362637,0.0,297.0,0.0,16.0,0.0,1.3,0.0,13,0.0,91,0.0,94.56043956043956,0.0,8605.0,0.0,68,0.0,7506.144355070162,0.0,23153.734673995663,0.0

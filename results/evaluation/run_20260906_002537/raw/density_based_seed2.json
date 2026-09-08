@@ -1,0 +1,20 @@
+{
+  "controller": "density_based",
+  "seed": 2,
+  "status": "success",
+  "started_at": "2026-09-05T18:56:06Z",
+  "average_waiting_time": 2.881720430107527,
+  "total_waiting_time": 268.0,
+  "maximum_waiting_time": 16.0,
+  "average_queue_length": 1.2307692307692308,
+  "maximum_queue_length": 8,
+  "throughput": 93,
+  "average_travel_time": 93.3225806451613,
+  "total_travel_time": 8679.0,
+  "number_of_stops": 67,
+  "fuel_consumption_mg": 7402.148583192389,
+  "co2_emissions_mg": 22832.93951138808,
+  "total_distance_m": 113.13378568335652,
+  "completed_vehicles": 93,
+  "measurement_samples": 260
+}

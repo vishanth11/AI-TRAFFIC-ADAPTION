@@ -1,0 +1,41 @@
+<routes>
+
+    <vType
+        id="car"
+        accel="2.6"
+        decel="4.5"
+        sigma="0.5"
+        length="5"
+        minGap="2.5"
+        maxSpeed="13.9"
+    />
+
+    <route
+        id="eastbound"
+        edges="left0A0 A0B0 B0C0 C0right0"
+    />
+
+    <route
+        id="westbound"
+        edges="right0C0 C0B0 B0A0 A0left0"
+    />
+
+    <flow
+        id="eastbound_flow"
+        type="car"
+        route="eastbound"
+        begin="0"
+        end="900"
+        vehsPerHour="900"
+    />
+
+    <flow
+        id="westbound_flow"
+        type="car"
+        route="westbound"
+        begin="0"
+        end="900"
+        vehsPerHour="900"
+    />
+
+</routes>

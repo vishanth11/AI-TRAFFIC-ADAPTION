@@ -1,0 +1,11 @@
+<configuration>
+    <input>
+        <net-file value="../networks/four_way.net.xml"/>
+        <route-files value="../routes/four_way.rou.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="1000"/>
+    </time>
+</configuration>

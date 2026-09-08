@@ -1,0 +1,38 @@
+{
+  "original_model": "random_forest_D",
+  "original_model_path": "models\\near_miss\\random_forest_D.joblib",
+  "calibration_method": "isotonic",
+  "feature_configuration": "D_deployment_realistic",
+  "features": [
+    "speed_object_1_kph",
+    "speed_object_2_kph",
+    "angle_degrees",
+    "acceleration_obj1_mps2",
+    "acceleration_obj2_mps2",
+    "min_dist_dual_check_m",
+    "object_count_at_frame1",
+    "target_dist_px",
+    "FE_log_mesafe",
+    "FE_dist_squared",
+    "class_object_1",
+    "class_object_2"
+  ],
+  "calibration_training_split": "validation",
+  "calibration_training_n_samples": 376,
+  "calibration_artifact": "models\\near_miss\\random_forest_D_calibrated.joblib",
+  "validation_scores": {
+    "raw": 0.45648765212679066,
+    "sigmoid": 0.4300398165406125,
+    "isotonic": 0.37798076492693905
+  },
+  "validation_ece": {
+    "sigmoid": {
+      "ece": 0.05371890522494644,
+      "mce": 0.19013736016237137
+    },
+    "isotonic": {
+      "ece": 3.55064677423338e-17,
+      "mce": 2.220446049250313e-16
+    }
+  }
+}

@@ -250,9 +250,10 @@ def test_near_miss_probability_from_real_model(near_miss_row):
 
 def test_near_miss_missing_feature_column_raises_clear_error(near_miss_row):
     si = SafetyIntelligence()
+    required_feature = si._ensure_near_miss().features[0]
     broken = dict(near_miss_row)
-    broken.pop("PET")
-    with pytest.raises(ValueError, match="missing required columns"):
+    broken.pop(required_feature)
+    with pytest.raises(ValueError, match="missing required.*columns"):
         si.assess_event(near_miss_features=broken)
 
 

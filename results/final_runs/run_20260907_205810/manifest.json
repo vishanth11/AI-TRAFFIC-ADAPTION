@@ -1,0 +1,13 @@
+{
+  "config": "simulation\\configs\\large_grid_multimodal.sumocfg",
+  "mode": "normal",
+  "visualization": "headless",
+  "seed": 1,
+  "steps": 3600,
+  "warmup_steps": 10,
+  "control_interval": 10.0,
+  "prediction_interval": 10,
+  "gui_delay": null,
+  "runtime_log": "results\\final_runs\\run_20260907_205810\\runtime.jsonl",
+  "metrics": "results\\final_runs\\run_20260907_205810\\metrics.json"
+}

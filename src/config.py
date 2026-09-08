@@ -31,7 +31,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-NEAR_MISS_MODEL_PATH = PROJECT_ROOT / "models" / "near_miss" / "random_forest_A_calibrated.joblib"
+NEAR_MISS_MODEL_PATH = PROJECT_ROOT / "models" / "near_miss" / "random_forest_D_calibrated.joblib"
 ACCIDENT_DETECTOR_PATH = PROJECT_ROOT / "models" / "accident" / "calibrated_accident_detector.pth"
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,5 @@
+controller,seed,status,started_at,average_waiting_time,total_waiting_time,maximum_waiting_time,average_queue_length,maximum_queue_length,throughput,average_travel_time,total_travel_time,number_of_stops,fuel_consumption_mg,co2_emissions_mg,total_distance_m,completed_vehicles,measurement_samples,error
+fixed_time,1,success,2026-09-08T01:40:16Z,23.873482428115015,37362.0,72.0,24.17972222222222,54,1565,211.43386581469647,330894.0,3993,192624.52988822333,595535.1974687824,2196.650951817196,1565,3600,
+density_based,1,success,2026-09-08T01:42:46Z,16.990909090909092,28035.0,100.0,8.47905872193437,62,1650,205.57151515151514,339193.0,3803,192401.25134245073,594852.7333611953,2261.5778249766067,1650,9264,
+predictive_adaptive,1,failed,2026-09-08T01:49:33Z,,,,,,,,,,,,,,,KeyError: 81
+integrated_ai,1,failed,2026-09-08T03:50:15Z,,,,,,,,,,,,,,,TraCIException: Connection 'default' is already active.

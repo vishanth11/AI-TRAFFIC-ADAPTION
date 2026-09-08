@@ -1,0 +1,31 @@
+{
+  "config": "C:\\Users\\HP\\AI-TRAFFIC-ADAPTION\\simulation\\configs\\corridor.sumocfg",
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "controllers": [
+    "fixed_time",
+    "density_based",
+    "predictive_adaptive",
+    "integrated_ai"
+  ],
+  "steps": 200,
+  "warmup_steps": 10,
+  "control_interval": 10.0,
+  "plots_created": true,
+  "metric_definitions": {
+    "average_waiting_time": "completed-vehicle accumulated waiting time mean",
+    "total_waiting_time": "completed-vehicle accumulated waiting time sum",
+    "maximum_waiting_time": "maximum observed accumulated waiting time",
+    "average_queue_length": "time-average active vehicles at speed <= 0.1 m/s",
+    "maximum_queue_length": "maximum active vehicles at speed <= 0.1 m/s",
+    "throughput": "number of arrived vehicles",
+    "average_travel_time": "mean arrival time minus departure time",
+    "total_travel_time": "sum of completed-vehicle travel times",
+    "number_of_stops": "speed transition from >0.1 to <=0.1 m/s",
+    "fuel_consumption_mg": "time-integrated SUMO fuel rate",
+    "co2_emissions_mg": "time-integrated SUMO CO2 rate"
+  }
+}

@@ -1,0 +1,13 @@
+<configuration>
+    <input>
+        <net-file value="../networks/corridor.net.xml" />
+        <route-files value="../routes/corridor_emergency.rou.xml" />
+    </input>
+    <time>
+        <begin value="0" />
+        <end value="900" />
+    </time>
+    <processing>
+        <seed value="1" />
+    </processing>
+</configuration>

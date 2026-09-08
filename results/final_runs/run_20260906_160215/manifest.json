@@ -1,0 +1,11 @@
+{
+  "config": "simulation\\configs\\corridor.sumocfg",
+  "mode": "normal",
+  "seed": 1,
+  "steps": 20,
+  "warmup_steps": 5,
+  "control_interval": 10.0,
+  "prediction_interval": 10,
+  "runtime_log": "results\\final_runs\\run_20260906_160215\\runtime.jsonl",
+  "metrics": "results\\final_runs\\run_20260906_160215\\metrics.json"
+}
