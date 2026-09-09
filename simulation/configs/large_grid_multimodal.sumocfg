@@ -1,0 +1,18 @@
+<configuration>
+
+    <input>
+        <net-file value="../networks/large_grid_multimodal.net.xml"/>
+        <route-files value="../routes/large_grid_multimodal.rou.xml"/>
+        <additional-files value="../additional/large_grid_multimodal_stops.add.xml"/>
+    </input>
+
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+    </time>
+
+    <report>
+        <no-step-log value="true"/>
+    </report>
+
+</configuration>

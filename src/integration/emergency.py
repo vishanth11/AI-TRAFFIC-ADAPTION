@@ -164,14 +164,39 @@ class EmergencyCorridorManager:
 
             current_junction = None
             required_movement = None
-            for junction_id, topology in topologies.items():
-                for movement_id, movement in topology.movements.items():
-                    if movement.from_road == current_edge and movement.to_road == next_edge:
-                        current_junction = junction_id
-                        required_movement = movement_id
+
+            # Prefer the route's exact edge pair. This is more reliable than
+            # getRoadID() during SUMO's transient internal connector states.
+            if current_edge in route:
+                route_pos = route.index(current_edge)
+                if route_pos + 1 < len(route):
+                    route_from = route[route_pos]
+                    route_to = route[route_pos + 1]
+                    for junction_id, topology in topologies.items():
+                        for movement_id, movement in topology.movements.items():
+                            if (
+                                movement.from_road == route_from
+                                and movement.to_road == route_to
+                            ):
+                                current_junction = junction_id
+                                required_movement = movement_id
+                                break
+                        if current_junction:
+                            break
+
+            # Preserve the original live-edge lookup as a fallback.
+            if current_junction is None:
+                for junction_id, topology in topologies.items():
+                    for movement_id, movement in topology.movements.items():
+                        if (
+                            movement.from_road == current_edge
+                            and movement.to_road == next_edge
+                        ):
+                            current_junction = junction_id
+                            required_movement = movement_id
+                            break
+                    if current_junction:
                         break
-                if current_junction:
-                    break
 
             distance = None
             if lane_length is not None and position is not None:
@@ -220,25 +245,60 @@ class EmergencyCorridorManager:
             return 1.0
         return max(0.0, min(1.0, math.exp(-state.eta_seconds / 30.0)))
 
+    @classmethod
+    def _resolve_required_movement(cls, state, topology):
+        """Resolve the ambulance movement from stable route information.
+
+        SUMO may briefly report an internal connector edge while a vehicle is
+        approaching a junction. The route sequence is more stable for
+        identifying the intended turn, so try the exact route pair first and
+        then fall back to the live edge.
+        """
+        route = tuple(state.route or ())
+        current_edge = state.current_edge
+
+        # 1. Exact live-edge -> next-route-edge pair.
+        if current_edge in route:
+            index = route.index(current_edge)
+            if index + 1 < len(route):
+                next_edge = route[index + 1]
+                for candidate_id, movement in topology.movements.items():
+                    if (
+                        movement.from_road == current_edge
+                        and movement.to_road == next_edge
+                    ):
+                        return candidate_id, next_edge
+
+        # 2. If getRoadID() is temporarily an internal connector, search the
+        # route for a movement belonging to this junction.
+        for index in range(len(route) - 1):
+            from_edge = route[index]
+            to_edge = route[index + 1]
+            for candidate_id, movement in topology.movements.items():
+                if (
+                    movement.from_road == from_edge
+                    and movement.to_road == to_edge
+                ):
+                    if current_edge is None or current_edge in (from_edge, to_edge):
+                        return candidate_id, to_edge
+
+        # 3. Final live-edge fallback.
+        if current_edge:
+            for candidate_id, movement in topology.movements.items():
+                if movement.from_road == current_edge:
+                    return candidate_id, movement.to_road
+
+        return None, None
+
     def plan_for_junction(self, state, junction_id, topology, phases, generator):
         """Build a safe candidate plan for the vehicle's required movement."""
-        movement_id = None
-        for candidate_id, movement in topology.movements.items():
-            if movement.from_road == state.current_edge:
-                next_edge = (
-                    state.route[state.route.index(state.current_edge) + 1]
-                    if state.current_edge in state.route
-                    and state.route.index(state.current_edge) + 1 < len(state.route)
-                    else None
-                )
-                if movement.to_road == next_edge:
-                    movement_id = candidate_id
-                    break
+        movement_id, next_edge = self._resolve_required_movement(state, topology)
+
         if movement_id is None:
             return EmergencyPlan(
                 state.vehicle_id, junction_id, None, (), None,
                 state.eta_seconds, self.urgency(state), False,
-                state.current_edge, None, state.distance_to_junction,
+                state.current_edge, next_edge, state.distance_to_junction,
                 state.speed_mps, ()
             )
 
@@ -248,13 +308,19 @@ class EmergencyCorridorManager:
             if movement_id in phase["movements"]
             and generator.is_compatible(phase["movements"])
         )
+
+        # Use a native SUMO phase containing the ambulance movement. This
+        # preserves the existing conflict/safety model and does not invent
+        # signal states.
         selected = candidate_phases[0] if candidate_phases else None
+
         conflicting = tuple(
             movement_id_2
             for movement_id_2 in topology.movements
             if movement_id_2 != movement_id
             and generator.graph.are_conflicting(movement_id, movement_id_2)
         )
+
         return EmergencyPlan(
             state.vehicle_id,
             junction_id,

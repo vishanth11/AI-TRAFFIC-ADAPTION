@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Edges for the multimodal 4x4 urban grid.
+
+     Road edges are identical to the validated large_grid scenario
+     (2 lanes per direction, 40 km/h = 11.11 m/s), EXCEPT the eight
+     horizontal edges that are crossed by the rail line (rows y=900,
+     600, 300, 0, both directions). Those are split into three parts
+     each so that the rail_crossing nodes (rw_rc*/re_rc*) sit between
+     real edges:
+       _p1 / _p2 / _p3   first / middle / last part in driving direction
+     Sidewalks, pedestrian crossings and bike lanes are NOT defined
+     here; build_network.py generates them with netconvert using the
+     guessing options "sidewalks.guess", "crossings.guess" and
+     "bikelanes.guess".
+
+     Rail edges (1 lane, 72 km/h = 20 m/s, rail-only) form two
+     one-directional tracks through the crossing nodes. -->
+<edges>
+    <!-- Row 1 (northern row): J01 - J02 - J03 - J04
+         J01_J02 / J02_J01 are split by both rail tracks. -->
+    <edge id="J01_J02_p1" from="J01" to="rw_rc900" numLanes="2" speed="11.11"/>
+    <edge id="J01_J02_p2" from="rw_rc900" to="re_rc900" numLanes="2" speed="11.11"/>
+    <edge id="J01_J02_p3" from="re_rc900" to="J02" numLanes="2" speed="11.11"/>
+    <edge id="J02_J01_p1" from="J02" to="re_rc900" numLanes="2" speed="11.11"/>
+    <edge id="J02_J01_p2" from="re_rc900" to="rw_rc900" numLanes="2" speed="11.11"/>
+    <edge id="J02_J01_p3" from="rw_rc900" to="J01" numLanes="2" speed="11.11"/>
+    <edge id="J02_J03" from="J02" to="J03" numLanes="2" speed="11.11"/>
+    <edge id="J03_J02" from="J03" to="J02" numLanes="2" speed="11.11"/>
+    <edge id="J03_J04" from="J03" to="J04" numLanes="2" speed="11.11"/>
+    <edge id="J04_J03" from="J04" to="J03" numLanes="2" speed="11.11"/>
+
+    <!-- Row 2: J05 - J06 - J07 - J08 (J05_J06 split) -->
+    <edge id="J05_J06_p1" from="J05" to="rw_rc600" numLanes="2" speed="11.11"/>
+    <edge id="J05_J06_p2" from="rw_rc600" to="re_rc600" numLanes="2" speed="11.11"/>
+    <edge id="J05_J06_p3" from="re_rc600" to="J06" numLanes="2" speed="11.11"/>
+    <edge id="J06_J05_p1" from="J06" to="re_rc600" numLanes="2" speed="11.11"/>
+    <edge id="J06_J05_p2" from="re_rc600" to="rw_rc600" numLanes="2" speed="11.11"/>
+    <edge id="J06_J05_p3" from="rw_rc600" to="J05" numLanes="2" speed="11.11"/>
+    <edge id="J06_J07" from="J06" to="J07" numLanes="2" speed="11.11"/>
+    <edge id="J07_J06" from="J07" to="J06" numLanes="2" speed="11.11"/>
+    <edge id="J07_J08" from="J07" to="J08" numLanes="2" speed="11.11"/>
+    <edge id="J08_J07" from="J08" to="J07" numLanes="2" speed="11.11"/>
+
+    <!-- Row 3: J09 - J10 - J11 - J12 (J09_J10 split) -->
+    <edge id="J09_J10_p1" from="J09" to="rw_rc300" numLanes="2" speed="11.11"/>
+    <edge id="J09_J10_p2" from="rw_rc300" to="re_rc300" numLanes="2" speed="11.11"/>
+    <edge id="J09_J10_p3" from="re_rc300" to="J10" numLanes="2" speed="11.11"/>
+    <edge id="J10_J09_p1" from="J10" to="re_rc300" numLanes="2" speed="11.11"/>
+    <edge id="J10_J09_p2" from="re_rc300" to="rw_rc300" numLanes="2" speed="11.11"/>
+    <edge id="J10_J09_p3" from="rw_rc300" to="J09" numLanes="2" speed="11.11"/>
+    <edge id="J10_J11" from="J10" to="J11" numLanes="2" speed="11.11"/>
+    <edge id="J11_J10" from="J11" to="J10" numLanes="2" speed="11.11"/>
+    <edge id="J11_J12" from="J11" to="J12" numLanes="2" speed="11.11"/>
+    <edge id="J12_J11" from="J12" to="J11" numLanes="2" speed="11.11"/>
+
+    <!-- Row 4 (southern row): J13 - J14 - J15 - J16 (J13_J14 split) -->
+    <edge id="J13_J14_p1" from="J13" to="rw_rc0" numLanes="2" speed="11.11"/>
+    <edge id="J13_J14_p2" from="rw_rc0" to="re_rc0" numLanes="2" speed="11.11"/>
+    <edge id="J13_J14_p3" from="re_rc0" to="J14" numLanes="2" speed="11.11"/>
+    <edge id="J14_J13_p1" from="J14" to="re_rc0" numLanes="2" speed="11.11"/>
+    <edge id="J14_J13_p2" from="re_rc0" to="rw_rc0" numLanes="2" speed="11.11"/>
+    <edge id="J14_J13_p3" from="rw_rc0" to="J13" numLanes="2" speed="11.11"/>
+    <edge id="J14_J15" from="J14" to="J15" numLanes="2" speed="11.11"/>
+    <edge id="J15_J14" from="J15" to="J14" numLanes="2" speed="11.11"/>
+    <edge id="J15_J16" from="J15" to="J16" numLanes="2" speed="11.11"/>
+    <edge id="J16_J15" from="J16" to="J15" numLanes="2" speed="11.11"/>
+
+    <!-- Column 1 (western column): J01 - J05 - J09 - J13 -->
+    <edge id="J01_J05" from="J01" to="J05" numLanes="2" speed="11.11"/>
+    <edge id="J05_J01" from="J05" to="J01" numLanes="2" speed="11.11"/>
+    <edge id="J05_J09" from="J05" to="J09" numLanes="2" speed="11.11"/>
+    <edge id="J09_J05" from="J09" to="J05" numLanes="2" speed="11.11"/>
+    <edge id="J09_J13" from="J09" to="J13" numLanes="2" speed="11.11"/>
+    <edge id="J13_J09" from="J13" to="J09" numLanes="2" speed="11.11"/>
+
+    <!-- Column 2: J02 - J06 - J10 - J14 -->
+    <edge id="J02_J06" from="J02" to="J06" numLanes="2" speed="11.11"/>
+    <edge id="J06_J02" from="J06" to="J02" numLanes="2" speed="11.11"/>
+    <edge id="J06_J10" from="J06" to="J10" numLanes="2" speed="11.11"/>
+    <edge id="J10_J06" from="J10" to="J06" numLanes="2" speed="11.11"/>
+    <edge id="J10_J14" from="J10" to="J14" numLanes="2" speed="11.11"/>
+    <edge id="J14_J10" from="J14" to="J10" numLanes="2" speed="11.11"/>
+
+    <!-- Column 3: J03 - J07 - J11 - J15 -->
+    <edge id="J03_J07" from="J03" to="J07" numLanes="2" speed="11.11"/>
+    <edge id="J07_J03" from="J07" to="J03" numLanes="2" speed="11.11"/>
+    <edge id="J07_J11" from="J07" to="J11" numLanes="2" speed="11.11"/>
+    <edge id="J11_J07" from="J11" to="J07" numLanes="2" speed="11.11"/>
+    <edge id="J11_J15" from="J11" to="J15" numLanes="2" speed="11.11"/>
+    <edge id="J15_J11" from="J15" to="J11" numLanes="2" speed="11.11"/>
+
+    <!-- Column 4 (eastern column): J04 - J08 - J12 - J16 -->
+    <edge id="J04_J08" from="J04" to="J08" numLanes="2" speed="11.11"/>
+    <edge id="J08_J04" from="J08" to="J04" numLanes="2" speed="11.11"/>
+    <edge id="J08_J12" from="J08" to="J12" numLanes="2" speed="11.11"/>
+    <edge id="J12_J08" from="J12" to="J08" numLanes="2" speed="11.11"/>
+    <edge id="J12_J16" from="J12" to="J16" numLanes="2" speed="11.11"/>
+    <edge id="J16_J12" from="J16" to="J12" numLanes="2" speed="11.11"/>
+
+    <!-- Boundary edges: west -->
+    <edge id="in_w_J01"  from="ext_J01_w" to="J01" numLanes="2" speed="11.11"/>
+    <edge id="out_w_J01" from="J01" to="ext_J01_w" numLanes="2" speed="11.11"/>
+    <edge id="in_w_J05"  from="ext_J05_w" to="J05" numLanes="2" speed="11.11"/>
+    <edge id="out_w_J05" from="J05" to="ext_J05_w" numLanes="2" speed="11.11"/>
+    <edge id="in_w_J09"  from="ext_J09_w" to="J09" numLanes="2" speed="11.11"/>
+    <edge id="out_w_J09" from="J09" to="ext_J09_w" numLanes="2" speed="11.11"/>
+    <edge id="in_w_J13"  from="ext_J13_w" to="J13" numLanes="2" speed="11.11"/>
+    <edge id="out_w_J13" from="J13" to="ext_J13_w" numLanes="2" speed="11.11"/>
+
+    <!-- Boundary edges: north -->
+    <edge id="in_n_J01"  from="ext_J01_n" to="J01" numLanes="2" speed="11.11"/>
+    <edge id="out_n_J01" from="J01" to="ext_J01_n" numLanes="2" speed="11.11"/>
+    <edge id="in_n_J02"  from="ext_J02_n" to="J02" numLanes="2" speed="11.11"/>
+    <edge id="out_n_J02" from="J02" to="ext_J02_n" numLanes="2" speed="11.11"/>
+    <edge id="in_n_J03"  from="ext_J03_n" to="J03" numLanes="2" speed="11.11"/>
+    <edge id="out_n_J03" from="J03" to="ext_J03_n" numLanes="2" speed="11.11"/>
+    <edge id="in_n_J04"  from="ext_J04_n" to="J04" numLanes="2" speed="11.11"/>
+    <edge id="out_n_J04" from="J04" to="ext_J04_n" numLanes="2" speed="11.11"/>
+
+    <!-- Boundary edges: east -->
+    <edge id="in_e_J04"  from="ext_J04_e" to="J04" numLanes="2" speed="11.11"/>
+    <edge id="out_e_J04" from="J04" to="ext_J04_e" numLanes="2" speed="11.11"/>
+    <edge id="in_e_J08"  from="ext_J08_e" to="J08" numLanes="2" speed="11.11"/>
+    <edge id="out_e_J08" from="J08" to="ext_J08_e" numLanes="2" speed="11.11"/>
+    <edge id="in_e_J12"  from="ext_J12_e" to="J12" numLanes="2" speed="11.11"/>
+    <edge id="out_e_J12" from="J12" to="ext_J12_e" numLanes="2" speed="11.11"/>
+    <edge id="in_e_J16"  from="ext_J16_e" to="J16" numLanes="2" speed="11.11"/>
+    <edge id="out_e_J16" from="J16" to="ext_J16_e" numLanes="2" speed="11.11"/>
+
+    <!-- Boundary edges: south -->
+    <edge id="in_s_J13"  from="ext_J13_s" to="J13" numLanes="2" speed="11.11"/>
+    <edge id="out_s_J13" from="J13" to="ext_J13_s" numLanes="2" speed="11.11"/>
+    <edge id="in_s_J14"  from="ext_J14_s" to="J14" numLanes="2" speed="11.11"/>
+    <edge id="out_s_J14" from="J14" to="ext_J14_s" numLanes="2" speed="11.11"/>
+    <edge id="in_s_J15"  from="ext_J15_s" to="J15" numLanes="2" speed="11.11"/>
+    <edge id="out_s_J15" from="J15" to="ext_J15_s" numLanes="2" speed="11.11"/>
+    <edge id="in_s_J16"  from="ext_J16_s" to="J16" numLanes="2" speed="11.11"/>
+    <edge id="out_s_J16" from="J16" to="ext_J16_s" numLanes="2" speed="11.11"/>
+
+    <!-- Rail track, southbound (x=150, north to south) -->
+    <edge id="rw_n0_stC"    from="rw_n0"    to="rw_stC"   numLanes="1" speed="20" allow="rail"/>
+    <edge id="rw_stC_rc900" from="rw_stC"  to="rw_rc900" numLanes="1" speed="20" allow="rail"/>
+    <edge id="rw_rc900_rc600" from="rw_rc900" to="rw_rc600" numLanes="1" speed="20" allow="rail"/>
+    <edge id="rw_rc600_stB" from="rw_rc600" to="rw_stB"   numLanes="1" speed="20" allow="rail"/>
+    <edge id="rw_stB_rc300" from="rw_stB"   to="rw_rc300" numLanes="1" speed="20" allow="rail"/>
+    <edge id="rw_rc300_rc0" from="rw_rc300" to="rw_rc0"   numLanes="1" speed="20" allow="rail"/>
+    <edge id="rw_rc0_stA"   from="rw_rc0"   to="rw_stA"   numLanes="1" speed="20" allow="rail"/>
+    <edge id="rw_stA_s0"    from="rw_stA"   to="rw_s0"    numLanes="1" speed="20" allow="rail"/>
+
+    <!-- Rail track, northbound (x=170, south to north) -->
+    <edge id="re_s0_stA"    from="re_s0"    to="re_stA"   numLanes="1" speed="20" allow="rail"/>
+    <edge id="re_stA_rc0"   from="re_stA"   to="re_rc0"   numLanes="1" speed="20" allow="rail"/>
+    <edge id="re_rc0_rc300" from="re_rc0"   to="re_rc300" numLanes="1" speed="20" allow="rail"/>
+    <edge id="re_rc300_stB" from="re_rc300" to="re_stB"   numLanes="1" speed="20" allow="rail"/>
+    <edge id="re_stB_rc600" from="re_stB"   to="re_rc600" numLanes="1" speed="20" allow="rail"/>
+    <edge id="re_rc600_rc900" from="re_rc600" to="re_rc900" numLanes="1" speed="20" allow="rail"/>
+    <edge id="re_rc900_stC" from="re_rc900" to="re_stC"   numLanes="1" speed="20" allow="rail"/>
+    <edge id="re_stC_n0"    from="re_stC"   to="re_n0"    numLanes="1" speed="20" allow="rail"/>
+</edges>
