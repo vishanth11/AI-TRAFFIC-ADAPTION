@@ -68,7 +68,13 @@ import traci
 
 from integration.controller import TrafficController
 from integration.decision_engine import DecisionEngine
-from integration.emergency import EmergencyCorridorManager, EmergencyPlan
+from integration.emergency import (
+    AmbulanceCorridorState,
+    CorridorJunctionState,
+    EmergencyCorridorManager,
+    EmergencyPlan,
+    EmergencyVehicleState,
+)
 from integration.prediction_adapter import TrafficPredictionAdapter
 from integration.sumo_conflict_adapter import SUMOConflictAdapter
 from integration.sumo_demand import SUMODemandCalculator
@@ -123,6 +129,7 @@ TOTAL_STEPS = 200
 
 EMERGENCY_PREEMPT_ETA_SECONDS = 45.0
 EMERGENCY_PREEMPT_DISTANCE_METERS = 500.0
+DOWNSTREAM_CONGESTION_THRESHOLD = 0.8
 
 
 # ---------------------------------------------------------------------------
@@ -397,6 +404,10 @@ class Phase2SUMOController:
         self._observe_steps = False
 
         self.decisions = []
+        self.corridors = {}
+        self.corridor_events = []
+        # Monotonic counter for FCFS ambulance detection order.
+        self._detection_counter = 0
 
 
     # -----------------------------------------------------------------------
@@ -799,202 +810,320 @@ class Phase2SUMOController:
 
         return max(0.0, distance)
 
-    def _build_route_ahead_plan(
-        self,
-        state,
-        topologies,
-        runtimes,
-    ):
-        """
-        Find the FIRST signalized movement ahead of an emergency vehicle.
-
-        This deliberately does not wait until state.current_junction is
-        populated. The ambulance can therefore receive a green at the next
-        signalized junction while it is still on an upstream road segment.
-        """
-        route = list(state.route or [])
-        if len(route) < 2:
-            return None
-
-        try:
-            route_index = int(
-                self.traci.vehicle.getRouteIndex(state.vehicle_id)
-            )
-        except Exception:
-            route_index = 0
-
-        route_index = max(0, min(route_index, len(route) - 1))
-
-        best = None
-
-        for movement_route_index in range(
-            route_index,
-            len(route) - 1,
-        ):
-            from_edge = route[movement_route_index]
-            to_edge = route[movement_route_index + 1]
-
-            if str(from_edge).startswith(":") or str(to_edge).startswith(":"):
-                continue
-
-            matched = None
-
-            for junction_id, topology in topologies.items():
-                for movement_id, movement in topology.movements.items():
-                    if (
-                        movement.from_road == from_edge
-                        and movement.to_road == to_edge
-                    ):
-                        matched = (
-                            junction_id,
-                            movement_id,
-                            topology,
-                        )
-                        break
-                if matched is not None:
-                    break
-
-            if matched is None:
-                continue
-
-            junction_id, movement_id, topology = matched
-            runtime = runtimes.get(junction_id)
-
-            if runtime is None:
-                continue
-
-            candidate_phases = tuple(
-                phase["phase_id"]
-                for phase in runtime["phases"]
-                if (
-                    movement_id in phase["movements"]
-                    and runtime["generator"].is_compatible(
-                        phase["movements"]
-                    )
-                )
-            )
-
-            if not candidate_phases:
-                continue
-
-            distance = self._route_distance_to_movement(
-                state,
-                route_index,
-                movement_route_index,
-            )
-
-            if distance is None:
-                continue
-
-            speed = (
-                float(state.speed_mps)
-                if state.speed_mps is not None
-                else 0.0
-            )
-
-            eta = None
-            if speed >= 0.5:
-                eta = distance / speed
-
-            conflicting = tuple(
-                other_id
-                for other_id in topology.movements
-                if (
-                    other_id != movement_id
-                    and runtime["generator"].graph.are_conflicting(
-                        movement_id,
-                        other_id,
-                    )
-                )
-            )
-
-            plan = EmergencyPlan(
-                vehicle_id=state.vehicle_id,
-                junction_id=junction_id,
-                required_movement=movement_id,
-                candidate_phases=candidate_phases,
-                selected_phase=candidate_phases[0],
-                eta_seconds=eta,
-                urgency=(
-                    max(
-                        0.0,
-                        min(
-                            1.0,
-                            math.exp(-eta / 30.0),
-                        ),
-                    )
-                    if eta is not None
-                    else 0.35
-                ),
-                safe=True,
-                current_edge=state.current_edge,
-                next_edge=to_edge,
-                distance_to_junction=distance,
-                vehicle_speed_mps=speed,
-                conflicting_movements=conflicting,
-            )
-
-            # The route is ordered. The first matched signalized movement
-            # is the next junction the ambulance will encounter.
-            best = plan
-            break
-
-        return best
-
-    def _build_upcoming_emergency_plans(
+    def _update_corridor_plans(
         self,
         emergency_states,
         topologies,
         runtimes,
+        emergency_manager,
     ):
         """
-        Build one route-ahead emergency plan per junction.
+        Build or update route-wide corridor plans for every ambulance.
 
-        If multiple emergency vehicles approach the same junction, select
-        the most urgent one.
+        For each emergency vehicle:
+        1. Build a full corridor plan via EmergencyCorridorManager.
+        2. If the route changed, rebuild the corridor.
+        3. Update progression — mark passed junctions.
+        4. Collect per-junction activation decisions.
+
+        Returns a dict of {junction_id: EmergencyPlan} for junctions that
+        should be preempted this step.
         """
-        plans = {}
+        now = self.traci.simulation.getTime()
+        active_plans = {}
+
+        # Track which ambulance IDs are still present.
+        current_ambulance_ids = set()
 
         for state in emergency_states:
-            plan = self._build_route_ahead_plan(
-                state,
-                topologies,
-                runtimes,
-            )
+            current_ambulance_ids.add(state.vehicle_id)
 
-            if plan is None:
-                continue
-
-            current = plans.get(plan.junction_id)
-
-            if (
-                current is None
-                or plan.urgency > current.urgency
-                or (
-                    plan.urgency == current.urgency
-                    and (
-                        plan.eta_seconds is not None
-                        and (
-                            current.eta_seconds is None
-                            or plan.eta_seconds < current.eta_seconds
-                        )
-                    )
+            # Fetch live route index from TraCI.
+            try:
+                live_route_index = int(
+                    self.traci.vehicle.getRouteIndex(state.vehicle_id)
                 )
-            ):
-                plans[plan.junction_id] = plan
+            except Exception:
+                live_route_index = state.route_index or 0
 
-            print(
-                f"[EMERGENCY_ROUTE_PLAN] "
-                f"time={self.traci.simulation.getTime():.1f} "
-                f"vehicle={plan.vehicle_id} "
-                f"junction={plan.junction_id} "
-                f"distance={plan.distance_to_junction} "
-                f"ETA={plan.eta_seconds} "
-                f"movement={plan.required_movement} "
-                f"phase={plan.selected_phase}"
+            # Create a state with the live route index for corridor building.
+            live_state = EmergencyVehicleState(
+                vehicle_id=state.vehicle_id,
+                vehicle_type=state.vehicle_type,
+                current_edge=state.current_edge,
+                current_lane=state.current_lane,
+                current_position=state.current_position,
+                distance_to_junction=state.distance_to_junction,
+                speed_mps=state.speed_mps,
+                route=state.route,
+                current_junction=state.current_junction,
+                next_junction=state.next_junction,
+                destination=state.destination,
+                emergency=state.emergency,
+                confidence=state.confidence,
+                eta_seconds=state.eta_seconds,
+                route_index=live_route_index,
             )
 
-        return plans
+            existing = self.corridors.get(state.vehicle_id)
+
+            # Detect route changes — rebuild if the route is different.
+            rebuild = False
+            if existing is None:
+                rebuild = True
+            elif tuple(state.route or ()) != existing.route:
+                rebuild = True
+                self.corridor_events.append({
+                    "time": now,
+                    "event": "corridor_route_changed",
+                    "ambulance": state.vehicle_id,
+                })
+                print(
+                    f"[CORRIDOR_ROUTE_CHANGED] "
+                    f"time={now:.1f} "
+                    f"vehicle={state.vehicle_id} "
+                    "action=REBUILD_CORRIDOR"
+                )
+
+            if rebuild:
+                corridor = emergency_manager.build_corridor_plan(
+                    live_state,
+                    topologies,
+                    runtimes,
+                    self._route_distance_to_movement,
+                )
+                # FCFS: the first ambulance detected keeps priority. Preserve
+                # the detection order across route-change rebuilds so a
+                # corridor rebuild never demotes an earlier ambulance.
+                if existing is not None and existing.detection_order is not None:
+                    corridor.detection_order = existing.detection_order
+                else:
+                    corridor.detection_order = self._detection_counter
+                    self._detection_counter += 1
+                self.corridors[state.vehicle_id] = corridor
+
+                if corridor.junctions:
+                    junction_summary = "; ".join(
+                        f"{js.plan.junction_id} "
+                        f"ETA={js.plan.eta_seconds:.1f}s "
+                        f"movement={js.plan.required_movement} "
+                        f"phase={js.plan.selected_phase}"
+                        if js.plan.eta_seconds is not None
+                        else f"{js.plan.junction_id} "
+                        f"movement={js.plan.required_movement} "
+                        f"phase={js.plan.selected_phase}"
+                        for js in corridor.junctions
+                    )
+                    print(
+                        f"[GREEN_CORRIDOR_CREATED] "
+                        f"time={now:.1f} "
+                        f"vehicle={state.vehicle_id} "
+                        f"junctions={len(corridor.junctions)} "
+                        f"plan=[{junction_summary}]"
+                    )
+                    self.corridor_events.append({
+                        "time": now,
+                        "event": "corridor_created",
+                        "ambulance": state.vehicle_id,
+                        "junction_count": len(corridor.junctions),
+                        "junctions": [
+                            js.plan.junction_id
+                            for js in corridor.junctions
+                        ],
+                    })
+            else:
+                corridor = existing
+                # Re-compute ETAs with current speed/position.
+                updated_corridor = emergency_manager.build_corridor_plan(
+                    live_state,
+                    topologies,
+                    runtimes,
+                    self._route_distance_to_movement,
+                )
+                # Merge updated plans into existing corridor, preserving
+                # activation/passage state.
+                updated_map = {
+                    js.plan.junction_id: js.plan
+                    for js in updated_corridor.junctions
+                }
+                for jstate in corridor.junctions:
+                    if jstate.released:
+                        continue
+                    new_plan = updated_map.get(jstate.plan.junction_id)
+                    if new_plan is not None:
+                        jstate.plan = new_plan
+
+            # Update progression — mark passed junctions.
+            newly_released = emergency_manager.update_corridor_progression(
+                corridor, live_state,
+            )
+            for released_junction_id in newly_released:
+                print(
+                    f"[CORRIDOR_JUNCTION_PASSED] "
+                    f"time={now:.1f} "
+                    f"vehicle={state.vehicle_id} "
+                    f"junction={released_junction_id} "
+                    "action=RELEASED"
+                )
+                self.corridor_events.append({
+                    "time": now,
+                    "event": "junction_passed",
+                    "ambulance": state.vehicle_id,
+                    "junction": released_junction_id,
+                })
+
+            if not corridor.active:
+                print(
+                    f"[GREEN_CORRIDOR_COMPLETED] "
+                    f"time={now:.1f} "
+                    f"vehicle={state.vehicle_id} "
+                    "all_junctions_passed=True"
+                )
+                self.corridor_events.append({
+                    "time": now,
+                    "event": "corridor_completed",
+                    "ambulance": state.vehicle_id,
+                })
+
+            # Collect junctions that should be activated this step.
+            for jstate in corridor.junctions:
+                if jstate.released:
+                    continue
+
+                if not emergency_manager.should_activate_junction(
+                    jstate,
+                    eta_threshold=EMERGENCY_PREEMPT_ETA_SECONDS,
+                    distance_threshold=EMERGENCY_PREEMPT_DISTANCE_METERS,
+                ):
+                    continue
+
+                # Downstream congestion check.  Skipped for draining
+                # junctions: they are holding green to clear the queue behind
+                # the ambulance, not to admit it, so a congested exit edge must
+                # not cut the drain short (that would trap cars mid-junction).
+                if not jstate.draining:
+                    downstream_occ = emergency_manager.check_downstream_congestion(
+                        jstate,
+                        congestion_threshold=DOWNSTREAM_CONGESTION_THRESHOLD,
+                    )
+                    if downstream_occ >= DOWNSTREAM_CONGESTION_THRESHOLD:
+                        print(
+                            f"[CORRIDOR_DOWNSTREAM_CONGESTED] "
+                            f"time={now:.1f} "
+                            f"vehicle={state.vehicle_id} "
+                            f"junction={jstate.plan.junction_id} "
+                            f"downstream_occupancy={downstream_occ:.2f} "
+                            "action=DEFER_ACTIVATION"
+                        )
+                        continue
+
+                junction_id = jstate.plan.junction_id
+                plan = jstate.plan
+
+                # FCFS: if multiple ambulances want the same junction, the
+                # ambulance detected FIRST keeps priority. Live urgency/ETA
+                # is only a deterministic tie-breaker for ambulances detected
+                # in the same step. This prevents a later ambulance from
+                # preempting an earlier one whose ETA inflated because it is
+                # blocked in traffic.
+                current_plan = active_plans.get(junction_id)
+                take_plan = current_plan is None
+                if not take_plan:
+                    this_corridor = self.corridors.get(plan.vehicle_id)
+                    current_corridor = self.corridors.get(current_plan.vehicle_id)
+                    this_order = (
+                        this_corridor.detection_order
+                        if this_corridor is not None
+                        else None
+                    )
+                    current_order = (
+                        current_corridor.detection_order
+                        if current_corridor is not None
+                        else None
+                    )
+                    if this_order is not None and current_order is not None:
+                        if this_order < current_order:
+                            take_plan = True
+                        elif this_order == current_order:
+                            # Same detection step: deterministic tie-break on
+                            # urgency, then ETA.
+                            take_plan = (
+                                plan.urgency > current_plan.urgency
+                                or (
+                                    plan.urgency == current_plan.urgency
+                                    and (
+                                        plan.eta_seconds is not None
+                                        and (
+                                            current_plan.eta_seconds is None
+                                            or plan.eta_seconds
+                                            < current_plan.eta_seconds
+                                        )
+                                    )
+                                )
+                            )
+                    else:
+                        # Missing detection order: fall back to urgency.
+                        take_plan = (
+                            plan.urgency > current_plan.urgency
+                            or (
+                                plan.urgency == current_plan.urgency
+                                and (
+                                    plan.eta_seconds is not None
+                                    and (
+                                        current_plan.eta_seconds is None
+                                        or plan.eta_seconds
+                                        < current_plan.eta_seconds
+                                    )
+                                )
+                            )
+                        )
+                if take_plan:
+                    active_plans[junction_id] = plan
+
+                if not jstate.activated:
+                    jstate.activated = True
+                    jstate.status = "activated"
+                    print(
+                        f"[CORRIDOR_JUNCTION_ACTIVATED] "
+                        f"time={now:.1f} "
+                        f"vehicle={state.vehicle_id} "
+                        f"junction={junction_id} "
+                        f"distance={plan.distance_to_junction} "
+                        f"ETA={plan.eta_seconds} "
+                        f"movement={plan.required_movement} "
+                        f"phase={plan.selected_phase}"
+                    )
+                    self.corridor_events.append({
+                        "time": now,
+                        "event": "junction_activated",
+                        "ambulance": state.vehicle_id,
+                        "junction": junction_id,
+                    })
+
+        # Clean up corridors for ambulances that disappeared.
+        disappeared = set(self.corridors.keys()) - current_ambulance_ids
+        for ambulance_id in disappeared:
+            corridor = self.corridors.pop(ambulance_id, None)
+            if corridor is not None:
+                print(
+                    f"[CORRIDOR_AMBULANCE_DISAPPEARED] "
+                    f"time={now:.1f} "
+                    f"vehicle={ambulance_id} "
+                    "action=RELEASE_ALL_JUNCTIONS"
+                )
+                self.corridor_events.append({
+                    "time": now,
+                    "event": "ambulance_disappeared",
+                    "ambulance": ambulance_id,
+                })
+                # Mark all junctions released so the main loop clears holds.
+                for jstate in corridor.junctions:
+                    jstate.released = True
+                    jstate.passed = True
+                    jstate.status = "released"
+                corridor.active = False
+
+        return active_plans
 
     @staticmethod
     def _emergency_requires_preemption(
@@ -1287,7 +1416,7 @@ class Phase2SUMOController:
 
 
                 # -------------------------------------------------------
-                # EMERGENCY DISCOVERY
+                # EMERGENCY DISCOVERY + CORRIDOR PLANNING
                 # -------------------------------------------------------
 
                 emergency_states = []
@@ -1332,10 +1461,11 @@ class Phase2SUMOController:
 
 
                     emergency_plans = (
-                        self._build_upcoming_emergency_plans(
+                        self._update_corridor_plans(
                             emergency_states,
                             topology_map,
                             runtimes,
+                            emergency_manager,
                         )
                     )
 
@@ -1579,7 +1709,7 @@ class Phase2SUMOController:
 
 
                     # ===================================================
-                    # RELEASE EMERGENCY HOLD
+                    # RELEASE EMERGENCY HOLD (corridor-aware)
                     # ===================================================
 
                     if (
@@ -1588,24 +1718,43 @@ class Phase2SUMOController:
                         ]
                         is not None
                     ):
+                        # Check if this junction has been released by
+                        # corridor progression.
+                        held_vehicle = runtime["emergency_vehicle_id"]
+                        junction_released = True
 
-                        print(
-                            f"[EMERGENCY_JUNCTION_RELEASE] "
-                            f"time={now:.1f} "
-                            f"junction={junction_id} "
-                            f"vehicle={runtime['emergency_vehicle_id']} "
-                            "action=RESUME_NORMAL_AI"
-                        )
+                        if held_vehicle and held_vehicle in self.corridors:
+                            corridor = self.corridors[held_vehicle]
+                            for jstate in corridor.junctions:
+                                if jstate.plan.junction_id == junction_id:
+                                    if not jstate.released:
+                                        junction_released = False
+                                    break
+
+                        if junction_released:
+                            print(
+                                f"[EMERGENCY_JUNCTION_RELEASE] "
+                                f"time={now:.1f} "
+                                f"junction={junction_id} "
+                                f"vehicle={runtime['emergency_vehicle_id']} "
+                                "action=RESUME_NORMAL_AI"
+                            )
+
+                            self.corridor_events.append({
+                                "time": now,
+                                "event": "junction_normal_restored",
+                                "ambulance": held_vehicle,
+                                "junction": junction_id,
+                            })
+
+                            runtime[
+                                "emergency_hold_phase"
+                            ] = None
 
 
-                        runtime[
-                            "emergency_hold_phase"
-                        ] = None
-
-
-                        runtime[
-                            "emergency_vehicle_id"
-                        ] = None
+                            runtime[
+                                "emergency_vehicle_id"
+                            ] = None
 
 
                     # ===================================================
