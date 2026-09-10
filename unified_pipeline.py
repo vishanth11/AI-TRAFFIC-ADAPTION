@@ -1,7 +1,17 @@
 """
 Phase 6 - Unified traffic perception pipeline.
-Combines yolo11n.pt (tracking) + emergency.pt (emergency detection).
-Outputs structured JSON per frame.
+
+Combines:
+    - yolo11n.pt     -> vehicle detection + ByteTrack tracking
+    - emergency.pt   -> emergency vehicle detection
+
+Outputs:
+    - Structured JSON per frame
+    - Console progress information
+
+Device:
+    - CUDA GPU if available
+    - CPU otherwise
 """
 
 from pathlib import Path
@@ -10,6 +20,7 @@ from collections import defaultdict
 import json
 import sys
 import os
+import torch
 
 
 # ============================================================
@@ -47,8 +58,41 @@ TRAFFIC_CLASSES = {
 # ============================================================
 
 TRAJECTORY_LEN = 30
+
 PIXELS_PER_METER = 15
+
 FPS = 30
+
+
+# ============================================================
+# DEVICE SELECTION
+# ============================================================
+
+def get_device():
+    """
+    Automatically select the best available device.
+
+    Returns:
+        0     -> NVIDIA CUDA GPU
+        "cpu" -> CPU
+    """
+
+    if torch.cuda.is_available():
+
+        print("[DEVICE] CUDA GPU detected.")
+
+        print(
+            f"[DEVICE] GPU: "
+            f"{torch.cuda.get_device_name(0)}"
+        )
+
+        return 0
+
+    print("[DEVICE] CUDA not available.")
+
+    print("[DEVICE] Using CPU.")
+
+    return "cpu"
 
 
 # ============================================================
@@ -56,16 +100,34 @@ FPS = 30
 # ============================================================
 
 def get_direction(positions: list) -> str:
+
     if len(positions) < 2:
+
         return "unknown"
 
-    dx = positions[-1][0] - positions[0][0]
-    dy = positions[-1][1] - positions[0][1]
+    dx = (
+        positions[-1][0]
+        - positions[0][0]
+    )
+
+    dy = (
+        positions[-1][1]
+        - positions[0][1]
+    )
 
     if abs(dx) >= abs(dy):
-        return "right" if dx > 0 else "left"
 
-    return "down" if dy > 0 else "up"
+        return (
+            "right"
+            if dx > 0
+            else "left"
+        )
+
+    return (
+        "down"
+        if dy > 0
+        else "up"
+    )
 
 
 # ============================================================
@@ -73,22 +135,43 @@ def get_direction(positions: list) -> str:
 # ============================================================
 
 def get_speed_kmh(positions: list) -> float:
+
     if len(positions) < 2:
+
         return 0.0
 
-    dx = positions[-1][0] - positions[0][0]
-    dy = positions[-1][1] - positions[0][1]
+    dx = (
+        positions[-1][0]
+        - positions[0][0]
+    )
 
-    pixel_dist = (dx ** 2 + dy ** 2) ** 0.5
+    dy = (
+        positions[-1][1]
+        - positions[0][1]
+    )
+
+    pixel_dist = (
+        (dx ** 2 + dy ** 2)
+        ** 0.5
+    )
 
     frames = len(positions) - 1
 
     if frames <= 0:
+
         return 0.0
 
-    mps = (pixel_dist / PIXELS_PER_METER) / (frames / FPS)
+    mps = (
+        pixel_dist
+        / PIXELS_PER_METER
+    ) / (
+        frames / FPS
+    )
 
-    return round(mps * 3.6, 1)
+    return round(
+        mps * 3.6,
+        1
+    )
 
 
 # ============================================================
@@ -96,29 +179,56 @@ def get_speed_kmh(positions: list) -> float:
 # ============================================================
 
 def iou(box1, box2) -> float:
-    x1 = max(box1[0], box2[0])
-    y1 = max(box1[1], box2[1])
-    x2 = min(box1[2], box2[2])
-    y2 = min(box1[3], box2[3])
 
-    inter = max(0, x2 - x1) * max(0, y2 - y1)
+    x1 = max(
+        box1[0],
+        box2[0]
+    )
+
+    y1 = max(
+        box1[1],
+        box2[1]
+    )
+
+    x2 = min(
+        box1[2],
+        box2[2]
+    )
+
+    y2 = min(
+        box1[3],
+        box2[3]
+    )
+
+    inter = (
+        max(0, x2 - x1)
+        * max(0, y2 - y1)
+    )
 
     if inter == 0:
+
         return 0.0
 
     area1 = (
         (box1[2] - box1[0])
-        * (box1[3] - box1[1])
+        *
+        (box1[3] - box1[1])
     )
 
     area2 = (
         (box2[2] - box2[0])
-        * (box2[3] - box2[1])
+        *
+        (box2[3] - box2[1])
     )
 
-    denominator = area1 + area2 - inter
+    denominator = (
+        area1
+        + area2
+        - inter
+    )
 
     if denominator <= 0:
+
         return 0.0
 
     return inter / denominator
@@ -128,9 +238,19 @@ def iou(box1, box2) -> float:
 # EMERGENCY MATCHING
 # ============================================================
 
-def is_emergency(box, emergency_boxes, threshold=0.1) -> bool:
+def is_emergency(
+    box,
+    emergency_boxes,
+    threshold=0.1
+) -> bool:
+
     for ebox in emergency_boxes:
-        if iou(box, ebox) >= threshold:
+
+        if iou(
+            box,
+            ebox
+        ) >= threshold:
+
             return True
 
     return False
@@ -140,41 +260,98 @@ def is_emergency(box, emergency_boxes, threshold=0.1) -> bool:
 # MAIN PIPELINE
 # ============================================================
 
-def run_pipeline(source: str, mode: str):
+def run_pipeline(
+    source: str,
+    mode: str
+):
 
-    print(f"\n--- Phase 6 Unified Pipeline: {source} ---")
+    print(
+        f"\n--- Phase 6 Unified Pipeline: "
+        f"{source} ---"
+    )
+
+    # --------------------------------------------------------
+    # DEVICE
+    # --------------------------------------------------------
+
+    device = get_device()
 
     # --------------------------------------------------------
     # Verify model files
     # --------------------------------------------------------
 
     if not GENERAL_MODEL_PATH.exists():
-        print(f"ERROR: YOLO model not found:")
-        print(f"       {GENERAL_MODEL_PATH}")
-        print("Run: python setup_models.py")
+
+        print(
+            "ERROR: YOLO model not found:"
+        )
+
+        print(
+            f"       {GENERAL_MODEL_PATH}"
+        )
+
+        print(
+            "Run: python setup_models.py"
+        )
+
         sys.exit(1)
 
     if not EMERGENCY_MODEL_PATH.exists():
-        print(f"ERROR: Emergency model not found:")
-        print(f"       {EMERGENCY_MODEL_PATH}")
-        print("Run: python setup_models.py")
+
+        print(
+            "ERROR: Emergency model not found:"
+        )
+
+        print(
+            f"       {EMERGENCY_MODEL_PATH}"
+        )
+
+        print(
+            "Run: python setup_models.py"
+        )
+
         sys.exit(1)
 
     # --------------------------------------------------------
     # Load models
     # --------------------------------------------------------
 
-    print(f"[MODEL] Loading YOLO11n:")
-    print(f"        {GENERAL_MODEL_PATH}")
+    print(
+        "[MODEL] Loading YOLO11n:"
+    )
 
-    general_model = YOLO(str(GENERAL_MODEL_PATH))
+    print(
+        f"        {GENERAL_MODEL_PATH}"
+    )
 
-    print(f"[MODEL] Loading emergency detector:")
-    print(f"        {EMERGENCY_MODEL_PATH}")
+    general_model = YOLO(
+        str(GENERAL_MODEL_PATH)
+    )
 
-    emergency_model = YOLO(str(EMERGENCY_MODEL_PATH))
+    print(
+        "[MODEL] Loading emergency detector:"
+    )
 
-    print("[MODEL] Both models loaded successfully.")
+    print(
+        f"        {EMERGENCY_MODEL_PATH}"
+    )
+
+    emergency_model = YOLO(
+        str(EMERGENCY_MODEL_PATH)
+    )
+
+    print(
+        "[MODEL] Both models loaded successfully."
+    )
+
+    # --------------------------------------------------------
+    # Device information
+    # --------------------------------------------------------
+
+    print(
+        f"[DEVICE] Selected device: "
+        f"{device}"
+    )
 
     # --------------------------------------------------------
     # Video/image mode
@@ -182,42 +359,74 @@ def run_pipeline(source: str, mode: str):
 
     is_video = mode == "video"
 
+    # --------------------------------------------------------
+    # Tracking history
+    # --------------------------------------------------------
+
     trajectories = defaultdict(list)
+
+    # --------------------------------------------------------
+    # Store all frame outputs
+    # --------------------------------------------------------
 
     all_frames = []
 
-    # --------------------------------------------------------
-    # General vehicle tracking
-    # --------------------------------------------------------
+    # ========================================================
+    # GENERAL VEHICLE TRACKING
+    # ========================================================
+
+    print(
+        "\n[PIPELINE] Starting vehicle tracking..."
+    )
 
     general_results = general_model.track(
+
         source=source,
+
         conf=0.25,
-        device=0,
-        classes=list(TRAFFIC_CLASSES.keys()),
+
+        device=device,
+
+        classes=list(
+            TRAFFIC_CLASSES.keys()
+        ),
+
         tracker="bytetrack.yaml",
+
         persist=True,
+
         stream=is_video,
     )
 
-    # --------------------------------------------------------
-    # Emergency detection
-    # --------------------------------------------------------
+    # ========================================================
+    # EMERGENCY DETECTION
+    # ========================================================
+
+    print(
+        "[PIPELINE] Starting emergency detection..."
+    )
 
     emergency_results = emergency_model.predict(
+
         source=source,
+
         conf=0.30,
-        device=0,
+
+        device=device,
+
         stream=is_video,
     )
 
-    # --------------------------------------------------------
-    # Process frames
-    # --------------------------------------------------------
+    # ========================================================
+    # PROCESS FRAMES
+    # ========================================================
 
     frame_count = 0
 
-    for g_result, e_result in zip(
+    for (
+        g_result,
+        e_result
+    ) in zip(
         general_results,
         emergency_results
     ):
@@ -230,18 +439,24 @@ def run_pipeline(source: str, mode: str):
 
         emergency_boxes = []
 
-        for box in e_result.boxes:
+        if e_result.boxes is not None:
 
-            if int(box.cls) == 0:
+            for box in e_result.boxes:
 
-                emergency_boxes.append(
-                    list(
-                        map(
-                            int,
-                            box.xyxy[0]
+                cls_id = int(
+                    box.cls
+                )
+
+                if cls_id == 0:
+
+                    emergency_boxes.append(
+                        list(
+                            map(
+                                int,
+                                box.xyxy[0]
+                            )
                         )
                     )
-                )
 
         # ----------------------------------------------------
         # Frame detections
@@ -249,7 +464,15 @@ def run_pipeline(source: str, mode: str):
 
         frame_detections = []
 
-        if g_result.boxes.id is None:
+        # ----------------------------------------------------
+        # No tracked objects
+        # ----------------------------------------------------
+
+        if (
+            g_result.boxes is None
+            or
+            g_result.boxes.id is None
+        ):
 
             all_frames.append(
                 {
@@ -260,64 +483,116 @@ def run_pipeline(source: str, mode: str):
 
             continue
 
-        # ----------------------------------------------------
-        # Vehicle detections
-        # ----------------------------------------------------
+        # ====================================================
+        # VEHICLE DETECTIONS
+        # ====================================================
 
         for box in g_result.boxes:
 
-            track_id = int(box.id)
+            # ------------------------------------------------
+            # Track ID
+            # ------------------------------------------------
 
-            cls_id = int(box.cls)
+            track_id = int(
+                box.id
+            )
+
+            # ------------------------------------------------
+            # Class
+            # ------------------------------------------------
+
+            cls_id = int(
+                box.cls
+            )
 
             label = TRAFFIC_CLASSES.get(
                 cls_id,
                 "unknown"
             )
 
+            # ------------------------------------------------
+            # Confidence
+            # ------------------------------------------------
+
             conf = round(
                 float(box.conf),
                 2
             )
+
+            # ------------------------------------------------
+            # Bounding box
+            # ------------------------------------------------
 
             x1, y1, x2, y2 = map(
                 int,
                 box.xyxy[0]
             )
 
-            cx = (x1 + x2) // 2
-            cy = (y1 + y2) // 2
-
             # ------------------------------------------------
-            # Trajectory
+            # Center position
             # ------------------------------------------------
 
-            trajectories[track_id].append(
+            cx = (
+                x1 + x2
+            ) // 2
+
+            cy = (
+                y1 + y2
+            ) // 2
+
+            # ------------------------------------------------
+            # Update trajectory
+            # ------------------------------------------------
+
+            trajectories[
+                track_id
+            ].append(
                 (cx, cy)
             )
+
+            # Keep only last N positions
 
             if len(
                 trajectories[track_id]
             ) > TRAJECTORY_LEN:
 
-                trajectories[track_id].pop(0)
+                trajectories[
+                    track_id
+                ].pop(0)
 
-            traj = trajectories[track_id]
+            traj = trajectories[
+                track_id
+            ]
 
             # ------------------------------------------------
-            # Motion information
+            # Direction
             # ------------------------------------------------
 
-            direction = get_direction(traj)
+            direction = get_direction(
+                traj
+            )
 
-            speed = get_speed_kmh(traj)
+            # ------------------------------------------------
+            # Speed
+            # ------------------------------------------------
+
+            speed = get_speed_kmh(
+                traj
+            )
 
             # ------------------------------------------------
             # Emergency status
             # ------------------------------------------------
 
             emergency = is_emergency(
-                [x1, y1, x2, y2],
+
+                [
+                    x1,
+                    y1,
+                    x2,
+                    y2
+                ],
+
                 emergency_boxes
             )
 
@@ -327,33 +602,47 @@ def run_pipeline(source: str, mode: str):
 
             detection = {
 
-                "vehicle_id": track_id,
+                "vehicle_id":
+                    track_id,
 
                 "type":
-                    "emergency_vehicle"
-                    if emergency
-                    else label,
+                    (
+                        "emergency_vehicle"
+                        if emergency
+                        else label
+                    ),
 
-                "confidence": conf,
+                "confidence":
+                    conf,
 
                 "bounding_box": {
+
                     "x1": x1,
+
                     "y1": y1,
+
                     "x2": x2,
+
                     "y2": y2,
                 },
 
                 "position": {
+
                     "x": cx,
+
                     "y": cy,
                 },
 
-                "speed": speed,
+                "speed":
+                    speed,
 
-                "direction": direction,
+                "direction":
+                    direction,
 
                 "trajectory":
-                    list(traj[-5:]),
+                    list(
+                        traj[-5:]
+                    ),
 
                 "tracking_status":
                     "active",
@@ -366,30 +655,42 @@ def run_pipeline(source: str, mode: str):
                 detection
             )
 
-        # ----------------------------------------------------
-        # Store frame
-        # ----------------------------------------------------
+        # ====================================================
+        # STORE FRAME
+        # ====================================================
 
         all_frames.append(
             {
-                "frame": frame_count,
-                "detections": frame_detections
+                "frame":
+                    frame_count,
+
+                "detections":
+                    frame_detections
             }
         )
 
-        # ----------------------------------------------------
-        # Console output every 30 frames
-        # ----------------------------------------------------
+        # ====================================================
+        # CONSOLE OUTPUT
+        # ====================================================
 
         if frame_count % 30 == 0:
 
             print(
+
                 f"\nFrame {frame_count} — "
+
                 f"{len(frame_detections)} objects"
+
                 +
+
                 (
-                    f" | {len(emergency_boxes)} EMERGENCY"
+
+                    f" | "
+                    f"{len(emergency_boxes)} "
+                    f"EMERGENCY"
+
                     if emergency_boxes
+
                     else ""
                 )
             )
@@ -397,27 +698,48 @@ def run_pipeline(source: str, mode: str):
             for d in frame_detections:
 
                 tag = (
+
                     " *** EMERGENCY ***"
+
                     if d["emergency"]
+
                     else ""
                 )
 
                 print(
-                    f"  ID={d['vehicle_id']:4d} | "
+
+                    f"  ID="
+                    f"{d['vehicle_id']:4d} | "
+
                     f"{d['type']:20s} | "
-                    f"conf={d['confidence']:.2f} | "
+
+                    f"conf="
+                    f"{d['confidence']:.2f} | "
+
                     f"pos=("
+
                     f"{d['position']['x']},"
+
                     f"{d['position']['y']}"
+
                     f") | "
-                    f"dir={d['direction']:7s} | "
-                    f"speed={d['speed']} km/h"
+
+                    f"dir="
+                    f"{d['direction']:7s} | "
+
+                    f"speed="
+                    f"{d['speed']} km/h"
+
                     f"{tag}"
                 )
 
     # ========================================================
     # SAVE JSON
     # ========================================================
+
+    print(
+        "\n[OUTPUT] Saving perception JSON..."
+    )
 
     with open(
         JSON_OUTPUT_PATH,
@@ -435,19 +757,70 @@ def run_pipeline(source: str, mode: str):
     # SUMMARY
     # ========================================================
 
+    unique_vehicles = len(
+        trajectories
+    )
+
+    total_detections = sum(
+        len(frame["detections"])
+        for frame in all_frames
+    )
+
+    emergency_detections = sum(
+
+        sum(
+            1
+            for detection
+            in frame["detections"]
+            if detection.get(
+                "emergency",
+                False
+            )
+        )
+
+        for frame in all_frames
+    )
+
     print(
-        f"\nTotal frames: "
+        "\n"
+        + "=" * 60
+    )
+
+    print(
+        "PHASE 6 PIPELINE COMPLETE"
+    )
+
+    print(
+        "=" * 60
+    )
+
+    print(
+        f"Total frames: "
         f"{frame_count}"
     )
 
     print(
+        f"Total detections: "
+        f"{total_detections}"
+    )
+
+    print(
         f"Unique vehicles tracked: "
-        f"{len(trajectories)}"
+        f"{unique_vehicles}"
+    )
+
+    print(
+        f"Emergency detections: "
+        f"{emergency_detections}"
     )
 
     print(
         f"JSON saved to: "
         f"{JSON_OUTPUT_PATH}"
+    )
+
+    print(
+        "=" * 60
     )
 
 
@@ -456,6 +829,10 @@ def run_pipeline(source: str, mode: str):
 # ============================================================
 
 if __name__ == "__main__":
+
+    # --------------------------------------------------------
+    # Argument validation
+    # --------------------------------------------------------
 
     if len(sys.argv) < 3:
 
@@ -473,17 +850,34 @@ if __name__ == "__main__":
 
         sys.exit(1)
 
+    # --------------------------------------------------------
+    # Mode
+    # --------------------------------------------------------
+
     mode = sys.argv[1].lower()
 
+    # --------------------------------------------------------
+    # Input path
+    # --------------------------------------------------------
+
     path = sys.argv[2]
+
+    # --------------------------------------------------------
+    # Validate input file
+    # --------------------------------------------------------
 
     if not os.path.exists(path):
 
         print(
-            f"ERROR: File not found: {path}"
+            f"ERROR: File not found: "
+            f"{path}"
         )
 
         sys.exit(1)
+
+    # --------------------------------------------------------
+    # Validate mode
+    # --------------------------------------------------------
 
     if mode not in (
         "image",
@@ -496,6 +890,10 @@ if __name__ == "__main__":
         )
 
         sys.exit(1)
+
+    # --------------------------------------------------------
+    # Run
+    # --------------------------------------------------------
 
     run_pipeline(
         path,
